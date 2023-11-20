@@ -1,0 +1,18 @@
+{
+    "node_name" : "behavior_hub",
+    "system" : 1,
+    "task_recv_periodic_time" : 500000,
+    "task_send_periodic_time" : 500000,
+    "task_main_periodic_time" : 10000,
+    "recv_port" : 50110,
+    "send_port" : 50111,
+    "recv_ip" : "127.0.0.1",
+    "send_ip" : "127.0.0.1",
+    "transit_watch_dog_time" : 1000.0,
+    "cmd_stack_size" : 10,
+    "sys_cmd_stack_size" : 5,
+    "print_log" : true,
+    "requirement" : {
+        "physics_hub" : {"type" : 1}
+    }
+}

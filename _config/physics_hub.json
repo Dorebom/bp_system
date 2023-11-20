@@ -1,0 +1,11 @@
+{
+    "node_name" : "physics_hub",
+    "system" : 2,
+    "task_main_periodic_time" : 2000,
+    "transit_watch_dog_time" : 1000.0,
+    "cmd_stack_size" : 10,
+    "sys_cmd_stack_size" : 5,
+    "print_log" : true,
+    "requirement" : {
+    }
+}
