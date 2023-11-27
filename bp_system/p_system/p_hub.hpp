@@ -7,8 +7,6 @@
 //
 #include "p_hub_state.hpp"
 #include "p_node.hpp"
-#include "../_common/p_node_cmd.hpp"
-#include "../_common/p_node_state.hpp"
 // List
 #include "../_common/node_list.hpp"
 #include "../b_system/b_hub_cmd/b_hub_cmd_list.hpp"
@@ -51,9 +49,9 @@ private:
     /* Add P Node */
 
 protected:
-    std::shared_ptr<p_hub_state> p_hub_state_;    
-    std::shared_ptr<p_node_cmd> p_hub_cmd_;
-    std::shared_ptr<p_node_cmd> p_hub_sys_cmd_;
+    std::shared_ptr<node_state> p_hub_state_;    
+    std::shared_ptr<node_cmd> p_hub_cmd_;
+    std::shared_ptr<node_cmd> p_hub_sys_cmd_;
 public:
     p_hub(/* args */);
     ~p_hub();

@@ -12,6 +12,7 @@ struct common_cmd_code
     int cmd_id;
     int cmd_type;
     int data_size;
+    bool is_sys_cmd;
     common_cmd_code(/* args */)
     {
         source = 0;
@@ -20,6 +21,7 @@ struct common_cmd_code
         cmd_id = 0;
         cmd_type = 0;
         data_size = 0;
+        is_sys_cmd = false;
     }
 };
 

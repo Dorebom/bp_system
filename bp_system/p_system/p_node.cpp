@@ -1,6 +1,6 @@
 #include "p_node.hpp"
 
-void p_node::Start_Node(bool use_udp_communication, std::shared_ptr<p_node_cmd> hub_cmd)
+void p_node::Start_Node(bool use_udp_communication, std::shared_ptr<node_cmd> hub_cmd)
 {
     p_hub_cmd_ = hub_cmd;
     Start(use_udp_communication);

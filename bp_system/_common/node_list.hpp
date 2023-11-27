@@ -17,7 +17,9 @@ enum class behavior_node_list : int
     HUB = 0,
     PHYSICS_HUB = 1,
     SIMPLE_NODE_A = 2,
-    SIMPLE_NODE_B = 3,    
+    SIMPLE_NODE_B = 3,
+    EXAMPLE_SUB_SERVO = 4,
+    EXAMPLE_PUB_CONTROL = 5,
     PERIOD_NODE // この行は削除しないこと
 };
 

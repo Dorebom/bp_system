@@ -10,9 +10,9 @@ void b_node::Start_Node(bool use_udp_communication, std::shared_ptr<node_cmd> hu
 void b_node::_sys_cmd_executor()
 {
     int user_state_machine_cnt = 0;
-    if (b_node_sys_cmd_->cmd_stack_.size() != 0)
+    if (node_sys_cmd_->cmd_stack_.size() != 0)
     {
-        auto cmd = b_node_sys_cmd_->cmd_stack_.pop();
+        auto cmd = node_sys_cmd_->cmd_stack_.pop();
         print_log("[sys_cmd_executor]" + get_b_node_name((behavior_node_list)cmd.cmd_code.source));
         switch ((b_node_sys_cmd_list)cmd.cmd_code.cmd_type)
         {
@@ -22,7 +22,7 @@ void b_node::_sys_cmd_executor()
             End();
             break;
         case b_node_sys_cmd_list::CHANGE_STABLE:
-            switch (node_state_)
+            switch (node_state_machine_)
             {
             case node_state_machine::READY:
                 ChangeStable();
@@ -50,7 +50,7 @@ void b_node::_sys_cmd_executor()
             ChangeRepair();
             break;
         case b_node_sys_cmd_list::CHANGE_READY:
-            switch (node_state_)
+            switch (node_state_machine_)
             {
             case node_state_machine::STABLE:
                 for (auto &&user_node_state : user_b_node_state_map)
@@ -91,7 +91,7 @@ void b_node::_sys_cmd_executor()
             PushForceStop();
             break;
         case b_node_sys_cmd_list::RELEASE_FORCE_STOP:
-            if (node_state_ == node_state_machine::FORCE_STOP)
+            if (node_state_machine_ == node_state_machine::FORCE_STOP)
             {
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
@@ -217,7 +217,7 @@ void b_node::set_config(nlohmann::json json_data)
 
 void b_node::initialize_processing()
 {
-    b_node_state_->state_code.state_machine = node_state_;
+    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _initialize_processing();
 }
@@ -231,7 +231,7 @@ void b_node::ready_processing()
             print_log("[ready_processing]<<WARNING>>Not Ready: " + get_b_node_name((behavior_node_list)node_state.first));
         }
     }
-    b_node_state_->state_code.state_machine = node_state_;
+    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _ready_processing();
 }
@@ -252,7 +252,7 @@ void b_node::repair_processing()
     {
         ChangeReady();
     }
-    b_node_state_->state_code.state_machine = node_state_;
+    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _repair_processing();
 }
@@ -272,14 +272,14 @@ void b_node::stable_processing()
     {
         ChangeReady();
     }
-    b_node_state_->state_code.state_machine = node_state_;
+    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _stable_processing();
 }
 
 void b_node::force_stop_processing()
 {
-    b_node_state_->state_code.state_machine = node_state_;
+    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _force_stop_processing();
 }
@@ -290,7 +290,7 @@ void b_node::transit_processing()
     if (now_time - transit_start_time_ > node_config_.transit_watch_dog_time)
     {
         transit_start_time_ = now_time;
-        node_state_ = prev_node_state_;
+        node_state_machine_ = prev_node_state_machine_;
         print_log("[transit_processing]<<WARNING>>Watch dog timer expired");
     }
     if (b_node_state_map.size() == requirement_b_node_list.size())
@@ -300,7 +300,7 @@ void b_node::transit_processing()
         {
             if (node_state.second != nullptr)
             {
-                if (node_state.second->state_code.state_machine != transit_destination_node_state_)
+                if (node_state.second->state_code.state_machine != transit_destination_node_state_machine_)
                 {
                     is_same_state_machine = false;
                 }
@@ -308,10 +308,10 @@ void b_node::transit_processing()
         }
         if (is_same_state_machine == true)
         {
-            node_state_ = transit_destination_node_state_;
+            node_state_machine_ = transit_destination_node_state_machine_;
             print_log("[transit_processing]Done: " 
-                    + get_node_state_machine_name(node_state_) 
-                    + " -> " + get_node_state_machine_name(transit_destination_node_state_));
+                    + get_node_state_machine_name(node_state_machine_) 
+                    + " -> " + get_node_state_machine_name(transit_destination_node_state_machine_));
         }
     }
 }
@@ -461,7 +461,7 @@ void b_node::set_user_b_node_state_ptr(behavior_node_list node_type, std::shared
     print_log("[set_user_b_node_state_ptr]Total User:" + std::to_string(user_b_node_state_map.size()));
 }
 
-void b_node::set_relative_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<st_p_node_state> state)
+void b_node::set_relative_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state)
 {
     p_node_state_map[(int)node_type] = state;
     print_log("[set_relative_p_node_state_ptr]" + get_p_node_name(node_type));
@@ -479,7 +479,7 @@ void b_node::set_relative_p_node_sys_cmd_ptr(physics_node_list node_type, std::s
     print_log("[set_relative_p_node_sys_cmd_ptr]" + get_p_node_name(node_type));
 }
 
-void b_node::set_user_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<st_p_node_state> state)
+void b_node::set_user_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state)
 {
     user_p_node_state_map[(int)node_type] = state;
     print_log("[set_user_p_node_state_ptr]" + get_p_node_name(node_type));

@@ -6,8 +6,8 @@
 p_hub::p_hub(/* args */)
 {
     is_main_thread_running_= false;
-    node_state_ = node_state_machine::UNCONFIGURED;
-    cmd_node_state_ = node_state_machine::UNCONFIGURED;
+    node_state_machine_ = node_state_machine::UNCONFIGURED;
+    cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
 
     this_node = behavior_node_list::PHYSICS_HUB;
     set_config_file_name(PHYSICS_HUB_CONFIG_FILE);
@@ -62,20 +62,20 @@ void p_hub::_set_config(nlohmann::json json_data)
 
 void p_hub::_configure()
 {
-    b_node_state_ = std::make_shared<st_node_state>();
-    b_node_cmd_ = std::make_shared<node_cmd>(node_config_.cmd_stack_size);
-    b_node_sys_cmd_ = std::make_shared<node_cmd>(node_config_.cmd_stack_size);
+    node_state_ = std::make_shared<st_node_state>();
+    node_cmd_ = std::make_shared<node_cmd>(node_config_.cmd_stack_size);
+    node_sys_cmd_ = std::make_shared<node_cmd>(node_config_.cmd_stack_size);
 }
 
 void p_hub::_set_state()
 {
-    b_node_state_->state_code.state_machine = node_state_;
+    node_state_->state_code.state_machine = node_state_machine_;
 }
 
 void p_hub::cmd_executor()
 {
     _sys_cmd_executor();
-    if (b_node_cmd_->cmd_stack_.size() != 0)
+    if (node_cmd_->cmd_stack_.size() != 0)
     {
     }
 }

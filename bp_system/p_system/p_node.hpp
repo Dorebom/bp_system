@@ -2,10 +2,6 @@
 
 #include "../_common/node.hpp"
 
-// Physics System
-#include "../_common/p_node_state.hpp"
-#include "../_common/p_node_cmd.hpp"
-// Behavior System
 #include "../_common/node_state.hpp"
 #include "../_common/node_cmd.hpp"
 
@@ -16,26 +12,22 @@ protected:
     physics_node_list this_node;
     //std::vector<int> requirement_b_node_list;
     std::vector<int> requirement_p_node_list;
-    /* My Item */
-    std::shared_ptr<st_p_node_state> p_node_state_;
-    std::shared_ptr<p_node_cmd> p_node_cmd_;
-    std::shared_ptr<p_node_cmd> p_node_sys_cmd_;
     /* P Hub Item */
-    std::shared_ptr<p_node_cmd> p_hub_cmd_;
+    std::shared_ptr<node_cmd> p_hub_cmd_;
     /* Relative B Nodes Item */
-    std::map<int, std::shared_ptr<st_node_state>> b_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> b_node_state_map;
     std::map<int, std::shared_ptr<node_cmd>> b_node_cmd_map;
     std::map<int, std::shared_ptr<node_cmd>> b_node_sys_cmd_map;
-    std::map<int, std::shared_ptr<st_node_state>> user_b_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> user_b_node_state_map;
     /* Relative P Node Item */
-    std::map<int, std::shared_ptr<st_p_node_state>> p_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> p_node_state_map;
     std::map<int, std::shared_ptr<node_cmd>> p_node_cmd_map;
     std::map<int, std::shared_ptr<node_cmd>> p_node_sys_cmd_map;
-    std::map<int, std::shared_ptr<st_p_node_state>> user_p_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> user_p_node_state_map;
 
     void _sys_cmd_executor();
     void _start_node(physics_node_list source_node);
-    void set_shared_ptr(st_p_node_cmd cmd);
+    void set_shared_ptr(st_node_cmd cmd);
     void hub_cmd_set_shared_ptr(physics_node_list source_node);
     void set_config(nlohmann::json json_data) override;
     virtual void _set_config(nlohmann::json json_data) = 0;
@@ -77,18 +69,18 @@ public:
     {
         is_main_thread_running_ = false;
     }
-    void Start_Node(bool use_udp_communication, std::shared_ptr<p_node_cmd> hub_cmd);
-    std::shared_ptr<st_p_node_state> get_p_node_state()
+    void Start_Node(bool use_udp_communication, std::shared_ptr<node_cmd> hub_cmd);
+    std::shared_ptr<node_state> get_p_node_state()
     {
-        return p_node_state_;
+        return node_state_;
     }
-    std::shared_ptr<p_node_cmd> get_p_node_cmd()
+    std::shared_ptr<node_cmd> get_p_node_cmd()
     {
-        return p_node_cmd_;
+        return node_cmd_;
     }
-    std::shared_ptr<p_node_cmd> get_p_node_sys_cmd()
+    std::shared_ptr<node_cmd> get_p_node_sys_cmd()
     {
-        return p_node_sys_cmd_;
+        return node_sys_cmd_;
     }
     /*
     // Behavior System

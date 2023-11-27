@@ -2,9 +2,13 @@
 
 #include "json.hpp"
 
+#include "../_common/comm/comm_udp.hpp" 
+
 #include "node_state_machine.hpp"
 #include "node_config.hpp"
 #include "node_util.hpp"
+#include "node_cmd.hpp"
+#include "node_state.hpp"
 
 #define CONFIG_FOLDER "../_config/"
 
@@ -22,6 +26,7 @@ private:
     bool signal_to_change_ready;
 
     bool use_udp_communication_;
+    CommUdp comm_udp_;
 
     void node_loop_processing();
     void generate_signal_to_chenge_node_state();
@@ -30,12 +35,21 @@ private:
 protected:
     /* data */
     bool is_main_thread_running_;
+    bool is_accepted_comm_udp_;
     bool is_occured_error_;
     bool is_occured_warning_;
 
+    double node_cycle_time_;    // [s]
+
+    /* My Item */
+    std::shared_ptr<node_state> node_state_;
+    std::shared_ptr<node_cmd> node_cmd_;
+    std::shared_ptr<node_cmd> node_sys_cmd_;
+    st_node_cmd send_data_;
+
     uint64_t transit_start_time_;
-    node_state_machine node_state_, prev_node_state_;
-    node_state_machine cmd_node_state_, transit_destination_node_state_;
+    node_state_machine node_state_machine_, prev_node_state_machine_;
+    node_state_machine cmd_node_state_machine_, transit_destination_node_state_machine_;
 
     /* threads */
     std::string config_file_name_;

@@ -1,0 +1,12 @@
+{
+    "node_name" : "b_example_pub_control",
+    "system" : 1,
+    "task_main_periodic_time" : 50000,
+    "transit_watch_dog_time" : 1000.0,
+    "cmd_stack_size" : 5,
+    "sys_cmd_stack_size" : 2,
+    "print_log" : true,
+    "requirement" : {
+        "b_sub_servo" : {"type" : 4, "system" : 1}
+    }
+}

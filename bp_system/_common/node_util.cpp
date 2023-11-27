@@ -20,6 +20,12 @@ std::string get_b_node_name(behavior_node_list node)
     case behavior_node_list::SIMPLE_NODE_B:
         return "b_simple_node_b";
         break;
+    case behavior_node_list::EXAMPLE_SUB_SERVO:
+        return "b_example_sub_servo";
+        break;
+    case behavior_node_list::EXAMPLE_PUB_CONTROL:
+        return "b_example_pub_control";
+        break;  
     default:
         return "unknown";
         break;

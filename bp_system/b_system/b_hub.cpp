@@ -9,14 +9,16 @@
 b_hub::b_hub(/* args */)
 {
     is_main_thread_running_ = false;
-    node_state_ = node_state_machine::UNCONFIGURED;
-    cmd_node_state_ = node_state_machine::UNCONFIGURED;
+    node_state_machine_ = node_state_machine::UNCONFIGURED;
+    cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
     set_config_file_name(BEHAVIOR_HUB_CONFIG_FILE);
 
     // Set shared ptr
     b_node_list[(int)behavior_node_list::PHYSICS_HUB] = p_hub_;
     b_node_list[(int)behavior_node_list::SIMPLE_NODE_A] = b_simple_node_a_;
-    b_node_list[(int)behavior_node_list::SIMPLE_NODE_B] = b_simple_node_b_;     
+    b_node_list[(int)behavior_node_list::SIMPLE_NODE_B] = b_simple_node_b_;
+    b_node_list[(int)behavior_node_list::EXAMPLE_SUB_SERVO] = b_example_sub_servo_;
+    b_node_list[(int)behavior_node_list::EXAMPLE_PUB_CONTROL ] = b_example_pub_control_;
 }
 
 b_hub::~b_hub()
@@ -60,15 +62,15 @@ void b_hub::transit_processing()
     if (now_time - transit_start_time_ > node_config_.transit_watch_dog_time)
     {
         transit_start_time_ = now_time;
-        node_state_ = prev_node_state_;
+        node_state_machine_ = prev_node_state_machine_;
         print_log("[transit_processing]Watch dog timer expired");
     }
     // すべての子Nodeがcmd_node_state_になったら、node_state_をtransit_destination_node_state_に変更する
     if (node_state_list.size() != 0)
     {
-        if (transit_destination_node_state_ == node_state_list.find((int)behavior_node_list::PHYSICS_HUB)->second->state_code.state_machine)
+        if (transit_destination_node_state_machine_ == node_state_list.find((int)behavior_node_list::PHYSICS_HUB)->second->state_code.state_machine)
         {
-            node_state_ = transit_destination_node_state_;
+            node_state_machine_ = transit_destination_node_state_machine_;
         }
     }
 }
@@ -81,7 +83,7 @@ bool b_hub::any_to_initialize_processing()
 // -> ready (reset process)
 bool b_hub::any_to_ready_processing() 
 {
-    if (node_state_ == node_state_machine::FORCE_STOP)
+    if (node_state_machine_ == node_state_machine::FORCE_STOP)
     {
         p_hub_->Reset();
     }
@@ -131,9 +133,9 @@ void b_hub::set_config(nlohmann::json json_data) {
 void b_hub::_configure() 
 {
     // Make shared ptr
-    b_hub_state_ = std::make_shared<b_hub_state>();
-    b_hub_cmd_ = std::make_shared<node_cmd>(node_config_.cmd_stack_size);
-    b_hub_sys_cmd_ = std::make_shared<node_cmd>(node_config_.sys_cmd_stack_size);
+    node_state_ = std::make_shared<node_state>();
+    node_cmd_ = std::make_shared<node_cmd>(node_config_.cmd_stack_size);
+    node_sys_cmd_ = std::make_shared<node_cmd>(node_config_.sys_cmd_stack_size);
     print_log("[cmd stack size]"+std::to_string(node_config_.cmd_stack_size));
     print_log("[sys cmd stack size]"+std::to_string(node_config_.sys_cmd_stack_size));
     // Exec node in requirement list
@@ -146,7 +148,7 @@ void b_hub::_configure()
 
 void b_hub::_set_state() 
 {
-    b_hub_state_->state_machine = node_state_;
+    node_state_->state_code.state_machine = node_state_machine_;
 }
 
 bool b_hub::check_usable_node_list(const behavior_node_list node_type)
@@ -171,9 +173,9 @@ bool b_hub::check_usable_node_list(const behavior_node_list node_type)
 
 void b_hub::_sys_cmd_executor()
 {
-    if (b_hub_sys_cmd_->cmd_stack_.size() != 0)
+    if (node_sys_cmd_->cmd_stack_.size() != 0)
     {
-        auto cmd = b_hub_sys_cmd_->cmd_stack_.pop();
+        auto cmd = node_sys_cmd_->cmd_stack_.pop();
         print_log("[cmd_executor]" + get_b_node_name((behavior_node_list)cmd.cmd_code.cmd_type));
 
         switch ((b_hub_sys_cmd_list)cmd.cmd_code.cmd_type)
@@ -210,13 +212,13 @@ void b_hub::_sys_cmd_executor()
 void b_hub::cmd_executor()
 {
     _sys_cmd_executor();
-    if (b_hub_cmd_->cmd_stack_.size() != 0)
+    if (node_cmd_->cmd_stack_.size() != 0)
     {
         st_node_cmd ret;
         st_cmd_start_node* tmp_scsn;
         st_cmd_end_node* tmp_scen;
 
-        auto cmd = b_hub_cmd_->cmd_stack_.pop();
+        auto cmd = node_cmd_->cmd_stack_.pop();
         print_log("[cmd_executor]" + get_b_node_name((behavior_node_list)cmd.cmd_code.source));
 
         switch ((b_hub_cmd_list)cmd.cmd_code.cmd_type)
@@ -257,7 +259,8 @@ void b_hub::cmd_executor()
 
 void b_hub::_exec_node(behavior_node_list node_type)
 {
-    b_node_list[(int)node_type]->Start_Node(false, b_hub_cmd_);
+    print_log(get_b_node_name(node_type));
+    b_node_list[(int)node_type]->Start_Node(false, node_cmd_);
     /*
     switch (node_type)
     {
@@ -300,7 +303,6 @@ void b_hub::exec_node(behavior_node_list node_type, behavior_node_list source_no
             {
                 print_log("<<NOTION>>Waiting list is skipped, because source node is HUB.");
             }
-
             _exec_node(node_type);
         }
         else

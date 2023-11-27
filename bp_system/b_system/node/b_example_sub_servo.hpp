@@ -7,9 +7,11 @@
 // List
 #include "../../_common/node_list.hpp"
 #include "../../b_system/b_hub_cmd/b_hub_cmd_list.hpp"
+#include "../../b_system/b_node_state/b_node_state_list.hpp"
+#include "../../b_system/b_node_cmd/b_node_cmd_list.hpp"
 
-class b_simple_node_b : public b_node
-{   
+class b_example_sub_servo : public b_node
+{
 private:
     /* data */
     /* node_state loop process */
@@ -18,6 +20,7 @@ private:
     void _repair_processing() override;
     void _stable_processing() override;
     void _force_stop_processing() override;
+    //void transit_processing() override;
     /* node state change process */
     // -> initialize
     bool _any_to_initialize_processing() override;
@@ -35,7 +38,11 @@ private:
     void _set_config(nlohmann::json json_data) override;
     void _set_state() override;
     void cmd_executor();
+    
+    state_example_servo* state_;
+    void _update_servo_state();
+
 public:
-    b_simple_node_b(/* args */);
-    ~b_simple_node_b();
-};  // class simple_node_b
+    b_example_sub_servo(/* args */);
+    ~b_example_sub_servo();
+}; // class b_example_sub_servo

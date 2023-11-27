@@ -16,12 +16,15 @@ add_executable(${CMAKE_PROJECT_NAME}
     main.cpp
     bp_system/_common/node.cpp
     bp_system/_common/node_util.cpp
+    bp_system/_common/comm/comm_udp.cpp
     bp_system/b_system/b_hub.cpp
     bp_system/p_system/p_hub.cpp
     # b node
     bp_system/b_system/b_node.cpp
     bp_system/b_system/node/b_simple_node_a.cpp
     bp_system/b_system/node/b_simple_node_b.cpp
+    bp_system/b_system/node/b_example_sub_servo.cpp
+    bp_system/b_system/node/b_example_pub_control.cpp
     # p node
     bp_system/p_system/p_node.cpp
     bp_system/p_system/node/p_simple_node_a.cpp

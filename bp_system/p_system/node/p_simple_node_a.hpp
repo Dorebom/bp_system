@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../../p_system/p_node.hpp"
-#include "../../_common/p_node_cmd.hpp"
-#include "../../_common/p_node_state.hpp"
 // List
 #include "../../_common/node_list.hpp"
 #include "../../p_system/p_hub_cmd/p_hub_cmd_list.hpp"

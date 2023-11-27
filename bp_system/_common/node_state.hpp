@@ -23,3 +23,5 @@ struct st_node_state
     common_state_code state_code;
     std::uint8_t data[1024];
 };
+
+typedef st_node_state node_state;

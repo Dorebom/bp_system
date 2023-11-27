@@ -6,9 +6,6 @@
 #include "b_node_sys_cmd/b_node_sys_cmd_list.hpp"
 #include "b_hub_cmd/b_hub_cmd_list.hpp"
 #include "../_common/node_list.hpp"
-/* Physics System */
-#include "../_common/p_node_state.hpp"
-#include "../_common/p_node_cmd.hpp"
 
 class b_node : public node
 {
@@ -17,22 +14,18 @@ protected:
     behavior_node_list this_node;
     std::vector<int> requirement_b_node_list;
     std::vector<int> requirement_p_node_list;
-    /* My Item */
-    std::shared_ptr<st_node_state> b_node_state_;
-    std::shared_ptr<node_cmd> b_node_cmd_;
-    std::shared_ptr<node_cmd> b_node_sys_cmd_;
     /* B Hub Item */
     std::shared_ptr<node_cmd> b_hub_cmd_;
     /* Relative B Nodes Item */
     std::map<int, std::shared_ptr<node_cmd>> b_node_cmd_map;
-    std::map<int, std::shared_ptr<st_node_state>> b_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> b_node_state_map;
     std::map<int, std::shared_ptr<node_cmd>> b_node_sys_cmd_map;
-    std::map<int, std::shared_ptr<st_node_state>> user_b_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> user_b_node_state_map;
     /* Relative P Node Item */
-    std::map<int, std::shared_ptr<st_p_node_state>> p_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> p_node_state_map;
     std::map<int, std::shared_ptr<node_cmd>> p_node_cmd_map;
     std::map<int, std::shared_ptr<node_cmd>> p_node_sys_cmd_map;
-    std::map<int, std::shared_ptr<st_p_node_state>> user_p_node_state_map;
+    std::map<int, std::shared_ptr<node_state>> user_p_node_state_map;
 
     void _sys_cmd_executor();
     void _start_node(behavior_node_list source_node);
@@ -83,15 +76,15 @@ public:
     void Start_Node(bool use_udp_communication, std::shared_ptr<node_cmd> hub_cmd);
     std::shared_ptr<st_node_state> get_state_ptr()
     {
-        return b_node_state_;
+        return node_state_;
     }
     std::shared_ptr<node_cmd> get_cmd_ptr()
     {
-        return b_node_cmd_;
+        return node_cmd_;
     }   
     std::shared_ptr<node_cmd> get_sys_cmd_ptr()
     {
-        return b_node_sys_cmd_;
+        return node_sys_cmd_;
     }
     // Behavior System
     void set_relative_b_node_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> cmd);
@@ -99,8 +92,8 @@ public:
     void set_relative_b_node_sys_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> sys_cmd);
     void set_user_b_node_state_ptr(behavior_node_list node_type, std::shared_ptr<st_node_state> state);
     // Physics System
-    void set_relative_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<st_p_node_state> state);
+    void set_relative_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state);
     void set_relative_p_node_cmd_ptr(physics_node_list node_type, std::shared_ptr<node_cmd> cmd);
     void set_relative_p_node_sys_cmd_ptr(physics_node_list node_type, std::shared_ptr<node_cmd> sys_cmd);
-    void set_user_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<st_p_node_state> state);
+    void set_user_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state);
 };
