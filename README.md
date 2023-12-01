@@ -1,6 +1,16 @@
 このプログラムはLGPLです．
 
+# build and run
 
+```
+sudo apt-get update
+sudo apt-get install
+mkdir build
+cd build
+cmake ..
+make
+./bp_system
+```
 
 # ノードの説明
 フォルダ bp_system/_comon にある node.hpp および node.cpp にてthreading処理およびState Machine処理を記述している．これらの処理は継承するb_hub，b_node，p_hub，p_nodeで共通のふるまいとなる．

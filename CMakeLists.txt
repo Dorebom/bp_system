@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17") # Set the C++ standard
 set(CMAKE_EXE_LINKER_FLAGS "-fuse-ld=gold") # Update the linker version
 
+find_package(Threads)
+
 # インクルードパスを追加
 include_directories(_extra/nlohmann)
 
@@ -32,4 +34,6 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 if(WIN32)
 	target_link_libraries(${CMAKE_PROJECT_NAME} ws2_32)
+else()
+    target_link_libraries(${CMAKE_PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif()
