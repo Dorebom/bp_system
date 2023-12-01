@@ -291,6 +291,26 @@ void b_node::transit_processing()
     {
         transit_start_time_ = now_time;
         node_state_machine_ = prev_node_state_machine_;
+        switch (prev_node_state_machine_)
+        {
+        case node_state_machine::READY:
+            any_to_ready_processing();
+            break;
+        case node_state_machine::REPAIR:
+            stable_to_repair_processing();
+            break;
+        case node_state_machine::STABLE:
+            repair_to_stable_processing();
+            break;
+        case node_state_machine::FORCE_STOP:
+            any_to_ready_processing();
+            break;
+        case node_state_machine::INITIALIZING:
+            any_to_initialize_processing();
+            break;
+        default:
+            break;
+        }
         print_log("[transit_processing]<<WARNING>>Watch dog timer expired");
     }
     if (b_node_state_map.size() == requirement_b_node_list.size())
