@@ -4,7 +4,7 @@
 
 ```
 sudo apt-get update
-sudo apt-get install
+sudo apt-get install cmake
 mkdir build
 cd build
 cmake ..
