@@ -40,6 +40,10 @@ void b_simple_node_a::_force_stop_processing()
     node_state_->state_code.state_machine = node_state_machine_;
 }
 
+void b_simple_node_a::_end_processing()
+{
+}
+
 /* node_state change process */
 // -> initialize
 bool b_simple_node_a::_any_to_initialize_processing() {return true;}
@@ -52,6 +56,14 @@ bool b_simple_node_a::_ready_to_repair_processing() {return true;}
 bool b_simple_node_a::_ready_to_stable_processing() {return true;}
 bool b_simple_node_a::_repair_to_stable_processing() {return true;}
 bool b_simple_node_a::_stable_to_repair_processing() {return true;}
+
+bool b_simple_node_a::_any_to_initialize_processing_after(){return true;}
+bool b_simple_node_a::_any_to_ready_processing_after(){return true;}
+bool b_simple_node_a::_any_to_force_stop_processing_after(){return true;}
+bool b_simple_node_a::_ready_to_repair_processing_after(){return true;}
+bool b_simple_node_a::_ready_to_stable_processing_after(){return true;}
+bool b_simple_node_a::_repair_to_stable_processing_after(){return true;}
+bool b_simple_node_a::_stable_to_repair_processing_after(){return true;}
 
 void b_simple_node_a::_set_config(nlohmann::json json_data) 
 {

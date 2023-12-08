@@ -39,36 +39,20 @@ bool b_example_sub_servo::_any_to_initialize_processing()
 
     return true;
 }
+bool b_example_sub_servo::_any_to_ready_processing(){return true;}
+bool b_example_sub_servo::_any_to_force_stop_processing(){return true;}
+bool b_example_sub_servo::_ready_to_repair_processing(){return true;}
+bool b_example_sub_servo::_ready_to_stable_processing(){return true;}
+bool b_example_sub_servo::_repair_to_stable_processing(){return true;}
+bool b_example_sub_servo::_stable_to_repair_processing(){return true;}
 
-bool b_example_sub_servo::_any_to_ready_processing()
-{
-    return true;
-}
-
-bool b_example_sub_servo::_any_to_force_stop_processing()
-{
-    return true;
-}
-
-bool b_example_sub_servo::_ready_to_repair_processing()
-{
-    return true;
-}
-
-bool b_example_sub_servo::_ready_to_stable_processing()
-{
-    return true;
-}
-
-bool b_example_sub_servo::_repair_to_stable_processing()
-{
-    return true;
-}
-
-bool b_example_sub_servo::_stable_to_repair_processing()
-{
-    return true;
-}
+bool b_example_sub_servo::_any_to_initialize_processing_after(){return true;}
+bool b_example_sub_servo::_any_to_ready_processing_after(){return true;}
+bool b_example_sub_servo::_any_to_force_stop_processing_after(){return true;}
+bool b_example_sub_servo::_ready_to_repair_processing_after(){return true;}
+bool b_example_sub_servo::_ready_to_stable_processing_after(){return true;}
+bool b_example_sub_servo::_repair_to_stable_processing_after(){return true;}
+bool b_example_sub_servo::_stable_to_repair_processing_after(){return true;}
 
 void b_example_sub_servo::_configure()
 {
@@ -137,6 +121,10 @@ void b_example_sub_servo::_force_stop_processing()
 {
     // Update servo state
     _update_servo_state();
+}
+
+void b_example_sub_servo::_end_processing()
+{
 }
 
 void b_example_sub_servo::_initialize_processing()

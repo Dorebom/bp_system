@@ -16,40 +16,21 @@ b_example_pub_control::~b_example_pub_control()
 {
 }
 
-bool b_example_pub_control::_any_to_initialize_processing()
-{
-    return true;
-}
+bool b_example_pub_control::_any_to_initialize_processing(){return true;}
+bool b_example_pub_control::_any_to_ready_processing(){return true;}
+bool b_example_pub_control::_any_to_force_stop_processing(){return true;}
+bool b_example_pub_control::_ready_to_repair_processing(){return true;}
+bool b_example_pub_control::_ready_to_stable_processing(){return true;}
+bool b_example_pub_control::_repair_to_stable_processing(){return true;}
+bool b_example_pub_control::_stable_to_repair_processing(){return true;}
 
-bool b_example_pub_control::_any_to_ready_processing()
-{
-    return true;
-}
-
-bool b_example_pub_control::_any_to_force_stop_processing()
-{
-    return true;
-}
-
-bool b_example_pub_control::_ready_to_repair_processing()
-{
-    return true;
-}
-
-bool b_example_pub_control::_ready_to_stable_processing()
-{
-    return true;
-}
-
-bool b_example_pub_control::_repair_to_stable_processing()
-{
-    return true;
-}
-
-bool b_example_pub_control::_stable_to_repair_processing()
-{
-    return true;
-}
+bool b_example_pub_control::_any_to_initialize_processing_after(){return true;}
+bool b_example_pub_control::_any_to_ready_processing_after(){return true;}
+bool b_example_pub_control::_any_to_force_stop_processing_after(){return true;}
+bool b_example_pub_control::_ready_to_repair_processing_after(){return true;}
+bool b_example_pub_control::_ready_to_stable_processing_after(){return true;}
+bool b_example_pub_control::_repair_to_stable_processing_after(){return true;}
+bool b_example_pub_control::_stable_to_repair_processing_after(){return true;}
 
 void b_example_pub_control::_initialize_processing()
 {
@@ -80,6 +61,9 @@ void b_example_pub_control::_force_stop_processing()
     node_state_->state_code.state_machine = node_state_machine_;
 }
 
+void b_example_pub_control::_end_processing()
+{
+}
 
 void b_example_pub_control::_set_config(nlohmann::json json_data)
 {

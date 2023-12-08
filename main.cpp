@@ -12,7 +12,7 @@ int main()
     b_hub_.Start(true);
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    //b_hub_.exec_node(behavior_node_list::SIMPLE_NODE_A, behavior_node_list::HUB);
+    b_hub_.exec_node(behavior_node_list::SIMPLE_NODE_A, behavior_node_list::HUB);
 
     b_hub_.exec_node(behavior_node_list::EXAMPLE_PUB_CONTROL, behavior_node_list::HUB);
 

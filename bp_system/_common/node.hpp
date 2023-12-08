@@ -18,7 +18,7 @@ private:
     /* data */
     bool signal_to_release_force_stop;
     bool signal_to_execute_force_stop;
-    bool signal_to_quit_main_system;
+    //bool signal_to_quit_main_system;
     bool signal_to_change_node_state;
     bool signal_to_reset_node;
     bool signal_to_change_stable;
@@ -68,6 +68,9 @@ protected:
     virtual void stable_processing() = 0;
     virtual void force_stop_processing() = 0;
     virtual void transit_processing() = 0;
+    // just once execute in End()
+    virtual void end_processing() = 0;
+
     /* node state change process */
     // -> initialize
     virtual bool any_to_initialize_processing() = 0;

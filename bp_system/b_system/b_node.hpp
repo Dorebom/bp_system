@@ -30,9 +30,10 @@ protected:
     void _sys_cmd_executor();
     void _start_node(behavior_node_list source_node);
     void set_shared_ptr(st_node_cmd cmd);
-    void hub_cmd_set_shared_ptr(behavior_node_list source_node);
     void set_config(nlohmann::json json_data) override;
     virtual void _set_config(nlohmann::json json_data) = 0;
+    void send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data);
+    void send_sys_cmd_to_node(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data, behavior_node_list destination_node);
     
     /* node_state loop process */
     void initialize_processing() override;
@@ -41,12 +42,15 @@ protected:
     void stable_processing() override;
     void force_stop_processing() override;
     void transit_processing() override;
+    // just once execute in End()
+    void end_processing() override;
 
     virtual void _initialize_processing() = 0;
     virtual void _ready_processing() = 0;
     virtual void _repair_processing() = 0;
     virtual void _stable_processing() = 0;
     virtual void _force_stop_processing() = 0;
+    virtual void _end_processing() = 0;
 
     /* node state change process */
     bool any_to_initialize_processing() override;
@@ -56,6 +60,7 @@ protected:
     bool ready_to_stable_processing() override;
     bool repair_to_stable_processing() override;
     bool stable_to_repair_processing() override;
+    // Before transiting
     // -> initialize
     virtual bool _any_to_initialize_processing() = 0;
     // -> ready (reset process)
@@ -67,6 +72,15 @@ protected:
     virtual bool _ready_to_stable_processing() = 0;
     virtual bool _repair_to_stable_processing() = 0;
     virtual bool _stable_to_repair_processing() = 0;
+    // After transiting
+    void _change_node_state(node_state_machine prev_, node_state_machine transit_destination_);
+    virtual bool _any_to_initialize_processing_after() = 0;
+    virtual bool _any_to_ready_processing_after() = 0;
+    virtual bool _any_to_force_stop_processing_after() = 0;
+    virtual bool _ready_to_repair_processing_after() = 0;
+    virtual bool _ready_to_stable_processing_after() = 0;
+    virtual bool _repair_to_stable_processing_after() = 0;
+    virtual bool _stable_to_repair_processing_after() = 0;
 
 public:
     b_node(/* args */)

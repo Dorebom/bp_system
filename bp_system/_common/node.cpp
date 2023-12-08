@@ -44,6 +44,7 @@ void node::Start(bool use_udp_communication)
 
 void node::End()
 {
+    end_processing();
     is_main_thread_running_ = false;
 }
 
@@ -143,6 +144,7 @@ void node::_task_main()
         std::this_thread::sleep_for(std::chrono::microseconds(node_config_.task_main_periodic_time));
     }
     print_log("Main Thread End");
+    node_state_machine_ = node_state_machine::UNCONFIGURED;
 }
 
 /* ↑-- THREAD --↑ */
@@ -348,7 +350,9 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
             if (is_success == false)
             {
                 print_log("<<ERROR>>Failed to change node state to FORCE_STOP");
-                signal_to_quit_main_system = true;
+                print_log("Quit main system");
+                //signal_to_quit_main_system = true;
+                End();
             }
             break;
         default:
@@ -470,7 +474,7 @@ void node::_reset_internal_status()
 
     signal_to_release_force_stop = false;
     signal_to_execute_force_stop = false;
-    signal_to_quit_main_system = false;
+    //signal_to_quit_main_system = false;
     signal_to_change_node_state = false;
     signal_to_reset_node = false;
     signal_to_change_stable = false;

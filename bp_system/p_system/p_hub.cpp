@@ -43,6 +43,9 @@ void p_hub::_stable_processing()
 void p_hub::_force_stop_processing() 
 {
 }
+void p_hub::_end_processing()
+{
+}
 /* node state change process */
 // -> initialize
 bool p_hub::_any_to_initialize_processing() {return true;}
@@ -55,6 +58,14 @@ bool p_hub::_ready_to_repair_processing() {return true;}
 bool p_hub::_ready_to_stable_processing() {return false;}
 bool p_hub::_repair_to_stable_processing() {return true;}
 bool p_hub::_stable_to_repair_processing() {return true;}
+
+bool p_hub::_any_to_initialize_processing_after(){return true;}
+bool p_hub::_any_to_ready_processing_after(){return true;}
+bool p_hub::_any_to_force_stop_processing_after(){return true;}
+bool p_hub::_ready_to_repair_processing_after(){return true;}
+bool p_hub::_ready_to_stable_processing_after(){return true;}
+bool p_hub::_repair_to_stable_processing_after(){return true;}
+bool p_hub::_stable_to_repair_processing_after(){return true;}
 
 void p_hub::_set_config(nlohmann::json json_data) 
 {

@@ -14,11 +14,11 @@ b_hub::b_hub(/* args */)
     set_config_file_name(BEHAVIOR_HUB_CONFIG_FILE);
 
     // Set shared ptr
-    b_node_list[(int)behavior_node_list::PHYSICS_HUB] = p_hub_;
-    b_node_list[(int)behavior_node_list::SIMPLE_NODE_A] = b_simple_node_a_;
-    b_node_list[(int)behavior_node_list::SIMPLE_NODE_B] = b_simple_node_b_;
-    b_node_list[(int)behavior_node_list::EXAMPLE_SUB_SERVO] = b_example_sub_servo_;
-    b_node_list[(int)behavior_node_list::EXAMPLE_PUB_CONTROL ] = b_example_pub_control_;
+    b_node_list[(int)behavior_node_list::PHYSICS_HUB] = std::make_shared<p_hub>(); //p_hub_;
+    b_node_list[(int)behavior_node_list::SIMPLE_NODE_A] = std::make_shared<b_simple_node_a>(); //b_simple_node_a_;
+    b_node_list[(int)behavior_node_list::SIMPLE_NODE_B] = std::make_shared<b_simple_node_b>(); //b_simple_node_b_;
+    b_node_list[(int)behavior_node_list::EXAMPLE_SUB_SERVO] = std::make_shared<b_example_sub_servo>(); //b_example_sub_servo_;
+    b_node_list[(int)behavior_node_list::EXAMPLE_PUB_CONTROL ] = std::make_shared<b_example_pub_control>(); //b_example_pub_control_;
 }
 
 b_hub::~b_hub()
@@ -74,6 +74,10 @@ void b_hub::transit_processing()
         }
     }
 }
+void b_hub::end_processing()
+{
+}
+
 /* node state change process */
 // -> initialize
 bool b_hub::any_to_initialize_processing() 
@@ -85,36 +89,36 @@ bool b_hub::any_to_ready_processing()
 {
     if (node_state_machine_ == node_state_machine::FORCE_STOP)
     {
-        p_hub_->Reset();
+        b_node_list[(int)behavior_node_list::PHYSICS_HUB]->Reset();
     }
     return true;
 } // stable, repair and ready
 // -> force stop
 bool b_hub::any_to_force_stop_processing()
 {
-    p_hub_->PushForceStop();
+    b_node_list[(int)behavior_node_list::PHYSICS_HUB]->PushForceStop();
     return true;
 } // stable, repair and ready
 
 // -> normal flow
 bool b_hub::ready_to_repair_processing() 
 {
-    p_hub_->ChangeRepair();
+    b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeRepair();
     return true;
 }
 bool b_hub::ready_to_stable_processing() 
 {
-    p_hub_->ChangeStable();
+    b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeStable();
     return true;
 }
 bool b_hub::repair_to_stable_processing() 
 {
-    p_hub_->ChangeStable();
+    b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeStable();
     return true;
 }
 bool b_hub::stable_to_repair_processing() 
 {
-    p_hub_->ChangeRepair();
+    b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeRepair();
     return true;
 }
 
@@ -249,6 +253,12 @@ void b_hub::cmd_executor()
                     //node_cmd_list[(int)behavior_node_list::PHYSICS_HUB]->cmd_stack_.push(cmd);
                 }
             }
+            break;
+        case b_hub_cmd_list::DELETE_SHARED_PTR:
+            print_log("[cmd_executor]DELETE_SHARED_PTR");
+            node_cmd_list.erase((int)cmd.cmd_code.source);
+            node_state_list.erase((int)cmd.cmd_code.source);
+            node_sys_cmd_list.erase((int)cmd.cmd_code.source);
             break;
         default:
             print_log("[cmd_executor]Invalid cmd_type" + get_b_node_name((behavior_node_list)cmd.cmd_code.cmd_type));

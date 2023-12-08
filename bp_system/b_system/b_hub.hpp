@@ -32,6 +32,8 @@ private:
     void stable_processing() override;
     void force_stop_processing() override;
     void transit_processing() override;
+    // just once execute in End()
+    void end_processing() override;
     /* node state change process */
     // -> initialize
     bool any_to_initialize_processing() override;
@@ -63,11 +65,11 @@ private:
     std::map<int, std::shared_ptr<node_cmd>> node_sys_cmd_list;
     std::map<int, std::shared_ptr<b_node>> b_node_list;
     /* Add B node */
-    std::shared_ptr<b_node> p_hub_ = std::make_shared<p_hub>();
-    std::shared_ptr<b_node> b_simple_node_a_ = std::make_shared<b_simple_node_a>();
-    std::shared_ptr<b_node> b_simple_node_b_ = std::make_shared<b_simple_node_b>();
-    std::shared_ptr<b_node> b_example_sub_servo_ = std::make_shared<b_example_sub_servo>();
-    std::shared_ptr<b_node> b_example_pub_control_ = std::make_shared<b_example_pub_control>();   
+    //std::shared_ptr<b_node> p_hub_ = std::make_shared<p_hub>();
+    //std::shared_ptr<b_node> b_simple_node_a_ = std::make_shared<b_simple_node_a>();
+    //std::shared_ptr<b_node> b_simple_node_b_ = std::make_shared<b_simple_node_b>();
+    //std::shared_ptr<b_node> b_example_sub_servo_ = std::make_shared<b_example_sub_servo>();
+    //std::shared_ptr<b_node> b_example_pub_control_ = std::make_shared<b_example_pub_control>();   
 public:
     b_hub(/* args */);
     ~b_hub();

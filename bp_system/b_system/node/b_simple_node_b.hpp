@@ -18,6 +18,7 @@ private:
     void _repair_processing() override;
     void _stable_processing() override;
     void _force_stop_processing() override;
+    void _end_processing() override;
     /* node state change process */
     // -> initialize
     bool _any_to_initialize_processing() override;
@@ -30,6 +31,14 @@ private:
     bool _ready_to_stable_processing() override;
     bool _repair_to_stable_processing() override;
     bool _stable_to_repair_processing() override;
+    // -> after transiting
+    bool _any_to_initialize_processing_after() override;
+    bool _any_to_ready_processing_after() override;
+    bool _any_to_force_stop_processing_after() override;
+    bool _ready_to_repair_processing_after() override;
+    bool _ready_to_stable_processing_after() override;
+    bool _repair_to_stable_processing_after() override;
+    bool _stable_to_repair_processing_after() override;
 
     void _configure() override;
     void _set_config(nlohmann::json json_data) override;

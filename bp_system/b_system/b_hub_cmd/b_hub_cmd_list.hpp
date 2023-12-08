@@ -11,6 +11,7 @@ enum class b_hub_cmd_list : int
     PICK_SHARED_PTR = 2,
     LOAD_NODE_LIST = 3,
     START_P_NODE = 4,
+    DELETE_SHARED_PTR = 5,
 
     PERIOD_NODE // この行は削除しないこと
 };
