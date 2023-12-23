@@ -14,10 +14,10 @@
 #include "b_hub_sys_cmd/b_hub_sys_cmd_list.hpp"
 #include "b_node_sys_cmd/b_node_sys_cmd_list.hpp"
 
-#include "../b_system/node/b_simple_node_a.hpp"
-#include "../b_system/node/b_simple_node_b.hpp"
-#include "../b_system/node/b_example_sub_servo.hpp"
-#include "../b_system/node/b_example_pub_control.hpp"
+#include "node/b_simple_node_a.hpp"
+#include "node/b_simple_node_b.hpp"
+#include "node/b_example_sub_servo.hpp"
+#include "node/b_example_pub_control.hpp"
 
 #define BEHAVIOR_HUB_CONFIG_FILE "behavior_hub.json"
 

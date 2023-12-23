@@ -2,6 +2,8 @@
 
 #include <random>
 
+// Setting file name
+#define B_NODE_CONFIG_DIRECTORY "../example_node/config/"
 #define B_NODE_CONFIG_FILE "b_example_sub_servo.json"
 
 b_example_sub_servo::b_example_sub_servo(/* args */)
@@ -11,6 +13,7 @@ b_example_sub_servo::b_example_sub_servo(/* args */)
     cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
 
     this_node = behavior_node_list::EXAMPLE_SUB_SERVO;
+    set_config_directory_name(B_NODE_CONFIG_DIRECTORY);
     set_config_file_name(B_NODE_CONFIG_FILE);
 
     //node_state_->state_code.state_machine = node_state_machine_;

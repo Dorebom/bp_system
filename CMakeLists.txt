@@ -12,7 +12,8 @@ find_package(Threads)
 
 # インクルードパスを追加
 include_directories(_extra/nlohmann)
-
+include_directories(example_node)
+include_directories(bp_system)
 
 add_executable(${CMAKE_PROJECT_NAME} 
     main.cpp
@@ -23,10 +24,10 @@ add_executable(${CMAKE_PROJECT_NAME}
     bp_system/p_system/p_hub.cpp
     # b node
     bp_system/b_system/b_node.cpp
-    bp_system/b_system/node/b_simple_node_a.cpp
-    bp_system/b_system/node/b_simple_node_b.cpp
-    bp_system/b_system/node/b_example_sub_servo.cpp
-    bp_system/b_system/node/b_example_pub_control.cpp
+    example_node/node/b_simple_node_a.cpp
+    example_node/node/b_simple_node_b.cpp
+    example_node/node/b_example_sub_servo.cpp
+    example_node/node/b_example_pub_control.cpp
     # p node
     bp_system/p_system/p_node.cpp
     bp_system/p_system/node/p_simple_node_a.cpp

@@ -53,7 +53,9 @@ protected:
 
     /* threads */
     std::string config_file_name_;
+    std::string config_directory_name_;
     void set_config_file_name(std::string config_file_name);
+    void set_config_directory_name(std::string config_directory);
     node_config node_config_;
     virtual void _task_main();
     virtual void _task_recv();

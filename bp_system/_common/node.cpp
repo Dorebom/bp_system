@@ -9,6 +9,7 @@
 node::node(/* args */)
 {
     is_main_thread_running_ = false;
+    set_config_directory_name(CONFIG_FOLDER);
 }
 
 node::~node()
@@ -430,7 +431,8 @@ void node::_load_json_config(std::string config_file)
 {
     //std::cout << std::filesystem::current_path() << std::endl;
     nlohmann::json j;
-    std::ifstream i(std::string(CONFIG_FOLDER) + config_file);
+    std::ifstream i(config_directory_name_ + config_file);
+    //std::ifstream i(std::string(CONFIG_FOLDER) + config_file);
     if (!i) {
         std::cerr << "ファイルオープンに失敗" << std::endl;
         std::exit(1);
@@ -461,6 +463,11 @@ void node::_load_json_config(std::string config_file)
 void node::set_config_file_name(std::string config_file_name)
 {
     config_file_name_ = config_file_name;
+}
+
+void node::set_config_directory_name(std::string config_directory)
+{
+    config_directory_name_ = config_directory;
 }
 
 void node::_reset_internal_status()

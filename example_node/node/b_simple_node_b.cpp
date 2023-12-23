@@ -1,5 +1,6 @@
 #include "b_simple_node_b.hpp"
 // Setting file name
+#define B_NODE_CONFIG_DIRECTORY "../example_node/config/"
 #define B_NODE_CONFIG_FILE "b_simple_node_b.json"
 
 b_simple_node_b::b_simple_node_b(/* args */)
@@ -9,6 +10,7 @@ b_simple_node_b::b_simple_node_b(/* args */)
     cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
 
     this_node = behavior_node_list::SIMPLE_NODE_B;
+    set_config_directory_name(B_NODE_CONFIG_DIRECTORY);
     set_config_file_name(B_NODE_CONFIG_FILE);
 }
 
