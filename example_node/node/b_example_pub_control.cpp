@@ -20,10 +20,16 @@ b_example_pub_control::~b_example_pub_control()
 }
 
 bool b_example_pub_control::_any_to_initialize_processing(){return true;}
-bool b_example_pub_control::_any_to_ready_processing(){return true;}
+bool b_example_pub_control::_any_to_ready_processing()
+{
+    return false;
+}
 bool b_example_pub_control::_any_to_force_stop_processing(){return true;}
 bool b_example_pub_control::_ready_to_repair_processing(){return true;}
-bool b_example_pub_control::_ready_to_stable_processing(){return true;}
+bool b_example_pub_control::_ready_to_stable_processing()
+{
+    return true;
+}
 bool b_example_pub_control::_repair_to_stable_processing(){return true;}
 bool b_example_pub_control::_stable_to_repair_processing(){return true;}
 
@@ -42,20 +48,68 @@ void b_example_pub_control::_initialize_processing()
 
 void b_example_pub_control::_ready_processing()
 {
-    cmd_executor();
+    state_example_servo* servo_state1 = (state_example_servo*)b_node_state_map[(int)behavior_node_list::EXAMPLE_SUB_SERVO]->data;
+    cmd_example_servo* cmd1;
+
+    //print_log("[servo state]count: " + std::to_string(servo_state1->encoder_count));
+    //print_log("[servo state]SM: " + get_node_state_machine_name(servo_state1->state_machine));
+    if (servo_state1->state_machine == node_state_machine::READY)
+    {
+        st_node_cmd cmd;
+        cmd.cmd_code.source = (int)behavior_node_list::EXAMPLE_PUB_CONTROL;
+        cmd.cmd_code.destination = (int)behavior_node_list::EXAMPLE_SUB_SERVO;
+        cmd.cmd_code.priority = 0;
+        cmd.cmd_code.cmd_id = 0;
+        cmd.cmd_code.cmd_type = (int)b_node_cmd_list::CMD_EXAMPLE_SERVO;
+        cmd.cmd_code.data_size = sizeof(cmd_example_servo);
+        cmd.cmd_code.is_sys_cmd = false;
+
+        cmd1 = (cmd_example_servo*)cmd.data;
+        cmd1->cmd_type = cmd_example_servo_type::CHANGE_SM_STABLE;
+        b_node_cmd_map[(int)behavior_node_list::EXAMPLE_SUB_SERVO]->cmd_stack_.push(cmd);
+        print_log("[sub servo state]change to stable");
+    }else if (servo_state1->state_machine == node_state_machine::STABLE)
+    {
+        ChangeStable();
+    }
 
     node_state_->state_code.state_machine = node_state_machine_;
 }
 
 void b_example_pub_control::_repair_processing()
 {
-    cmd_executor();
     node_state_->state_code.state_machine = node_state_machine_;
 }
 
 void b_example_pub_control::_stable_processing()
 {
-    cmd_executor();
+    state_example_servo* servo_state1 = (state_example_servo*)b_node_state_map[(int)behavior_node_list::EXAMPLE_SUB_SERVO]->data;
+    cmd_example_servo* cmd1;
+
+    if (servo_state1->state_machine == node_state_machine::STABLE)
+    {
+        st_node_cmd cmd;
+        cmd.cmd_code.source = (int)behavior_node_list::EXAMPLE_PUB_CONTROL;
+        cmd.cmd_code.destination = (int)behavior_node_list::EXAMPLE_SUB_SERVO;
+        cmd.cmd_code.priority = 0;
+        cmd.cmd_code.cmd_id = 0;
+        cmd.cmd_code.cmd_type = (int)b_node_cmd_list::CMD_EXAMPLE_SERVO;
+        cmd.cmd_code.data_size = sizeof(cmd_example_servo);
+        cmd.cmd_code.is_sys_cmd = false;
+
+        cmd1 = (cmd_example_servo*)cmd.data;
+        if (servo_state1->encoder_count < 0)
+        {
+            cmd1->cmd_type = cmd_example_servo_type::ADD_COUNT;
+            b_node_cmd_map[(int)behavior_node_list::EXAMPLE_SUB_SERVO]->cmd_stack_.push(cmd);
+        }
+        else if(servo_state1->encoder_count > 0)
+        {
+            cmd1->cmd_type = cmd_example_servo_type::SUB_COUNT;
+            b_node_cmd_map[(int)behavior_node_list::EXAMPLE_SUB_SERVO]->cmd_stack_.push(cmd);
+        }
+    }
+
     node_state_->state_code.state_machine = node_state_machine_;
 }
 
@@ -84,24 +138,4 @@ void b_example_pub_control::_set_state()
 {
     // Set node state
     node_state_->state_code.state_machine = node_state_machine_;
-}
-
-void b_example_pub_control::cmd_executor()
-{
-}
-
-void b_example_pub_control::_update_servo_control()
-{
-    state_example_servo* servo_state1 = (state_example_servo*)b_node_state_map[(int)behavior_node_list::EXAMPLE_SUB_SERVO]->data;
-    cmd_example_servo cmd1;
-
-    if (servo_state1->servo_angle > 0)
-    {
-        cmd1.cmd_servo_anglur_velocity = -1.0;
-
-    }
-    else
-    {
-        cmd1.cmd_servo_anglur_velocity = 1.0;
-    } 
 }

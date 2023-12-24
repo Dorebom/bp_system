@@ -10,10 +10,11 @@
 #include "../data_struct/state/b_node_state_list.hpp"
 #include "../data_struct/cmd/b_node_cmd_list.hpp"
 
+#include <random>
+
 class b_example_sub_servo : public b_node
 {
 private:
-    /* data */
     /* node_state loop process */
     void _initialize_processing() override;
     void _ready_processing() override;
@@ -45,8 +46,12 @@ private:
     void _set_state() override;
     void cmd_executor();
     
+    /* data */
     state_example_servo* state_;
-    void _update_servo_state();
+
+    void _update_servo_state(int add_value);
+    void _reset_encoder_count();
+    void _display_servo_state();
 
 public:
     b_example_sub_servo(/* args */);

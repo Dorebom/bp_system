@@ -1,11 +1,24 @@
 #pragma once
 
+enum class cmd_example_servo_type : int
+{
+    /* data */
+    NONE,
+    ADD_COUNT,
+    SUB_COUNT,
+    RESET,
+    CHANGE_SM_STABLE,
+    CHANGE_SM_READY,
+    CHANGE_SM_FORCE_STOP,
+    RELEASE_FORCE_STOP
+};
+
 struct cmd_example_servo
 {
     /* data */
-    double cmd_servo_anglur_velocity;
+    cmd_example_servo_type cmd_type;
     cmd_example_servo(/* args */)
     {
-        cmd_servo_anglur_velocity = 0.0;
+        cmd_type = cmd_example_servo_type::NONE;
     }
 };

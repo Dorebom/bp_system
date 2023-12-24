@@ -43,10 +43,6 @@ private:
     void _configure() override;
     void _set_config(nlohmann::json json_data) override;
     void _set_state() override;
-    void cmd_executor();
-    
-    //state_example_control* state_;
-    void _update_servo_control();
 public:
     b_example_pub_control(/* args */);
     ~b_example_pub_control();

@@ -11,7 +11,7 @@
     "transit_watch_dog_time" : 1000.0,
     "cmd_stack_size" : 10,
     "sys_cmd_stack_size" : 5,
-    "print_log" : true,
+    "print_log" : false,
     "requirement" : {
         "physics_hub" : {"type" : 1}
     }
