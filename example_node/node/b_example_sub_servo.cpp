@@ -39,10 +39,6 @@ b_example_sub_servo::b_example_sub_servo(/* args */)
     this_node = behavior_node_list::EXAMPLE_SUB_SERVO;
     set_config_directory_name(B_NODE_CONFIG_DIRECTORY);
     set_config_file_name(B_NODE_CONFIG_FILE);
-
-    //node_state_->state_code.state_machine = node_state_machine_;
-    //node_state_->state_code.transit_destination_node_state= node_state_machine_;
-    //node_state_->state_code.node_id = 1;
 }
 
 b_example_sub_servo::~b_example_sub_servo()
@@ -108,7 +104,6 @@ void b_example_sub_servo::cmd_executor()
     st_node_cmd cmd;
     if (node_cmd_->cmd_stack_.size() != 0)
     {
-        print_log("HogeHoge");
         cmd = node_cmd_->cmd_stack_.pop();
         print_log(std::to_string(cmd.cmd_code.cmd_type));
         if ((b_node_cmd_list)cmd.cmd_code.cmd_type == b_node_cmd_list::CMD_EXAMPLE_SERVO)
@@ -129,7 +124,6 @@ void b_example_sub_servo::cmd_executor()
                     ChangeReady();
                     break;
                 case cmd_example_servo_type::CHANGE_SM_STABLE:
-                    print_log("HogeHoge");
                     ChangeStable();
                     break;
                 case cmd_example_servo_type::CHANGE_SM_FORCE_STOP:
@@ -147,8 +141,6 @@ void b_example_sub_servo::cmd_executor()
 
 void b_example_sub_servo::_ready_processing()
 {
-    // Update servo state
-    //_update_servo_state();
     cmd_executor();
     _display_servo_state();
     _set_state();
@@ -156,15 +148,10 @@ void b_example_sub_servo::_ready_processing()
 
 void b_example_sub_servo::_repair_processing()
 {
-    // Update servo state
-    //_update_servo_state();
-    _display_servo_state();
 }
 
 void b_example_sub_servo::_stable_processing()
 {
-    // Update servo state
-    //_update_servo_state();
     cmd_executor();
     _display_servo_state();
     _set_state();
@@ -172,10 +159,6 @@ void b_example_sub_servo::_stable_processing()
 
 void b_example_sub_servo::_force_stop_processing()
 {
-    // Update servo state
-    //_update_servo_state();
-    cmd_executor();
-    _display_servo_state();
 }
 
 void b_example_sub_servo::_end_processing()
@@ -185,20 +168,3 @@ void b_example_sub_servo::_end_processing()
 void b_example_sub_servo::_initialize_processing()
 {
 }
-
-/*
-void b_example_sub_servo::_update_servo_state()
-{
-    // Update servo state
-    state_->servo_angle += state_->cmd_servo_anglur_velocity * node_cycle_time_;
-    if (fabs(state_->servo_angle) > M_PI)
-    {
-        is_occured_error_ = true;
-    }
-    else
-    {
-        is_occured_error_ = false;
-    }
-    print_log("[servo angle] " + std::to_string(state_->servo_angle) + " [rad]");
-}
-*/
