@@ -6,6 +6,7 @@
     "cmd_stack_size" : 5,
     "sys_cmd_stack_size" : 2,
     "print_log" : true,
+    "use_udp_communication" : false,
     "requirement" : {
     }
 }

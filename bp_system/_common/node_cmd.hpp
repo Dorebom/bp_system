@@ -13,6 +13,7 @@ struct common_cmd_code
     int cmd_type;
     int data_size;
     bool is_sys_cmd;
+    bool is_used_msgpack;
     common_cmd_code(/* args */)
     {
         source = 0;
@@ -22,6 +23,7 @@ struct common_cmd_code
         cmd_type = 0;
         data_size = 0;
         is_sys_cmd = false;
+        is_used_msgpack = false;
     }
 };
 
@@ -32,6 +34,7 @@ struct st_node_cmd
     std::uint8_t data[1024];
     st_node_cmd(/* args */)
     {
+        cmd_code = common_cmd_code();
     }
 };
 

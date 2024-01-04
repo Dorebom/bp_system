@@ -56,4 +56,7 @@ private:
 public:
     b_example_sub_servo(/* args */);
     ~b_example_sub_servo();
+    std::shared_ptr<b_node> Clone() const override{
+        return std::make_shared<b_example_sub_servo>(*this);
+    }
 }; // class b_example_sub_servo

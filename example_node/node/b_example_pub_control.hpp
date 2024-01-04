@@ -46,4 +46,7 @@ private:
 public:
     b_example_pub_control(/* args */);
     ~b_example_pub_control();
+    std::shared_ptr<b_node> Clone() const override{
+        return std::make_shared<b_example_pub_control>(*this);
+    }
 }; // class b_example_pub_control

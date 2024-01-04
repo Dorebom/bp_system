@@ -12,13 +12,6 @@ b_hub::b_hub(/* args */)
     node_state_machine_ = node_state_machine::UNCONFIGURED;
     cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
     set_config_file_name(BEHAVIOR_HUB_CONFIG_FILE);
-
-    // Set shared ptr
-    b_node_list[(int)behavior_node_list::PHYSICS_HUB] = std::make_shared<p_hub>(); //p_hub_;
-    b_node_list[(int)behavior_node_list::SIMPLE_NODE_A] = std::make_shared<b_simple_node_a>(); //b_simple_node_a_;
-    b_node_list[(int)behavior_node_list::SIMPLE_NODE_B] = std::make_shared<b_simple_node_b>(); //b_simple_node_b_;
-    b_node_list[(int)behavior_node_list::EXAMPLE_SUB_SERVO] = std::make_shared<b_example_sub_servo>(); //b_example_sub_servo_;
-    b_node_list[(int)behavior_node_list::EXAMPLE_PUB_CONTROL ] = std::make_shared<b_example_pub_control>(); //b_example_pub_control_;
 }
 
 b_hub::~b_hub()
@@ -33,6 +26,16 @@ void b_hub::End()
     }
     // exit_node(behavior_node_list::PHYSICS_HUB);
     is_main_thread_running_ = false;
+}
+
+void b_hub::store_node(b_node& stored_node, std::string node_name)
+{
+    b_node_store.set_node(stored_node, node_name);
+}
+
+void b_hub::show_stored_node()
+{
+    b_node_store.show_stored_node();
 }
 
 /* node_state loop process */
@@ -175,6 +178,20 @@ bool b_hub::check_usable_node_list(const behavior_node_list node_type)
     return false;
 }
 
+void b_hub::_set_node_name_and_type(std::string node_name, std::string node_type)
+{
+    if (running_node_type_list.find(node_name) != running_node_type_list.end())
+    {
+        print_log("Error: Your node's name(" + node_name + ") is already used.");
+        return;
+    }
+    else{
+        print_log("Set node name: " + node_name);
+        print_log("Set node type: " + node_type);
+        running_node_type_list[node_name] = node_type;
+    }
+}
+
 void b_hub::_sys_cmd_executor()
 {
     if (node_sys_cmd_->cmd_stack_.size() != 0)
@@ -221,44 +238,35 @@ void b_hub::cmd_executor()
         st_node_cmd ret;
         st_cmd_start_node* tmp_scsn;
         st_cmd_end_node* tmp_scen;
+        st_cmd_set_node_name* tmp_scsnn;
 
         auto cmd = node_cmd_->cmd_stack_.pop();
-        print_log("[cmd_executor]" + get_b_node_name((behavior_node_list)cmd.cmd_code.source));
-
         switch ((b_hub_cmd_list)cmd.cmd_code.cmd_type)
         {
         case b_hub_cmd_list::START_NODE:
             print_log("[cmd_executor]START_NODE");
             tmp_scsn = (st_cmd_start_node*)cmd.data;
-            exec_node((behavior_node_list)tmp_scsn->node_type, (behavior_node_list)cmd.cmd_code.source);
+            //exec_node(tmp_scsn->node_type, (behavior_node_list)cmd.cmd_code.source);
             break;
         case b_hub_cmd_list::END_NODE:
             print_log("[cmd_executor]END_NODE");
             tmp_scen = (st_cmd_end_node*)cmd.data;
-            exit_node((behavior_node_list)tmp_scen->node_type);
+            //exit_node((behavior_node_list)tmp_scen->node_type);
             break;
         case b_hub_cmd_list::PICK_SHARED_PTR:
             print_log("[cmd_executor]PICK_SHARED_PTR");
-            pick_shared_ptr((behavior_node_list)cmd.cmd_code.source);
-            break;
-        case b_hub_cmd_list::START_P_NODE:
-            print_log("[cmd_executor]START_P_NODE");
-            tmp_scsn = (st_cmd_start_node*)cmd.data;
-            if (node_state_list[(int)behavior_node_list::PHYSICS_HUB] != nullptr)
-            {
-                if (node_state_list[(int)behavior_node_list::PHYSICS_HUB]->state_code.state_machine != node_state_machine::INITIALIZING)
-                {
-                    // TODO: implement
-                    print_log("TODO : implement!!!!!!!!");
-                    //node_cmd_list[(int)behavior_node_list::PHYSICS_HUB]->cmd_stack_.push(cmd);
-                }
-            }
+            //pick_shared_ptr((behavior_node_list)cmd.cmd_code.source);
             break;
         case b_hub_cmd_list::DELETE_SHARED_PTR:
             print_log("[cmd_executor]DELETE_SHARED_PTR");
-            node_cmd_list.erase((int)cmd.cmd_code.source);
-            node_state_list.erase((int)cmd.cmd_code.source);
-            node_sys_cmd_list.erase((int)cmd.cmd_code.source);
+            //node_cmd_list.erase((int)cmd.cmd_code.source);
+            //node_state_list.erase((int)cmd.cmd_code.source);
+            //node_sys_cmd_list.erase((int)cmd.cmd_code.source);
+            break;
+        case b_hub_cmd_list::SET_NODE_NAME:
+            print_log("[cmd_executor]SET_NODE_NAME");
+            tmp_scsnn = (st_cmd_set_node_name*)cmd.data;
+            _set_node_name_and_type(tmp_scsnn->node_name, tmp_scsnn->node_type);
             break;
         default:
             print_log("[cmd_executor]Invalid cmd_type" + get_b_node_name((behavior_node_list)cmd.cmd_code.cmd_type));
@@ -270,7 +278,7 @@ void b_hub::cmd_executor()
 void b_hub::_exec_node(behavior_node_list node_type)
 {
     print_log(get_b_node_name(node_type));
-    b_node_list[(int)node_type]->Start_Node(false, node_cmd_);
+    b_node_list[(int)node_type]->Start_Node(node_cmd_);
     /*
     switch (node_type)
     {
@@ -322,6 +330,15 @@ void b_hub::exec_node(behavior_node_list node_type, behavior_node_list source_no
     }
 }
 
+void b_hub::exec_node(std::string node_type_name, std::string unique_node_name, std::string setting_json_file_name, std::string setting_json_folder_name)
+{
+    print_log("exec_node: " + node_type_name);
+    node_list[unique_node_name] = b_node_store.get_node(node_type_name);
+    node_list[unique_node_name]->set_config_directory_name(setting_json_folder_name);
+    node_list[unique_node_name]->set_config_file_name(setting_json_file_name);
+    node_list[unique_node_name]->Start_Node(node_cmd_);
+}
+
 void b_hub::_exit_node(behavior_node_list node_type)
 {
     b_node_list[(int)node_type]->End();
@@ -359,7 +376,7 @@ void b_hub::pick_shared_ptr(behavior_node_list node_type)
         print_log("Item: " + get_b_node_name((behavior_node_list)pair.first) 
                 + ", Ordered user: " + get_b_node_name((behavior_node_list)pair.second));
     }
-    
+
     if (waiting_cmd_list.find((int)node_type) != waiting_cmd_list.end())
     {
         if (waiting_cmd_list.find((int)node_type)->second != (int)behavior_node_list::HUB)

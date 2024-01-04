@@ -4,20 +4,18 @@
 #include <map>
 
 #include "../_common/node.hpp"
-#include "../p_system/p_hub.hpp"
+//#include "../p_system/p_hub.hpp"
 
-#include "../_common/node_list.hpp"
+#include "node_store.hpp"
+
+//#include "../_common/node_list.hpp"
 #include "../_common/node_util.hpp"
 
+#include "b_node.hpp"
 #include "b_hub_state.hpp"
 #include "b_hub_cmd/b_hub_cmd_list.hpp"
 #include "b_hub_sys_cmd/b_hub_sys_cmd_list.hpp"
 #include "b_node_sys_cmd/b_node_sys_cmd_list.hpp"
-
-#include "node/b_simple_node_a.hpp"
-#include "node/b_simple_node_b.hpp"
-#include "node/b_example_sub_servo.hpp"
-#include "node/b_example_pub_control.hpp"
 
 #define BEHAVIOR_HUB_CONFIG_FILE "behavior_hub.json"
 
@@ -55,8 +53,14 @@ private:
     std::vector<int> running_node_list;
     bool check_usable_node_list(const behavior_node_list value);
     
+    void _set_node_name_and_type(std::string node_name, std::string node_type);
+
     void cmd_executor();
     void _sys_cmd_executor();
+    std::map<std::string, std::string> running_node_name2type_list; // key: node_name, value: node_type
+    std::shared_ptr<std::map<std::string, int>> running_node_name2id_list;           // key: node_name, value: node_id
+    std::map<int, std::string> running_node_id2name_list;           // key: node_id,   value: node_name
+
     std::vector<int> requirement_list;
     std::map<int, int> waiting_cmd_list;
     std::map<int, int> waiting_state_list;
@@ -64,17 +68,17 @@ private:
     std::map<int, std::shared_ptr<node_state>> node_state_list;
     std::map<int, std::shared_ptr<node_cmd>> node_sys_cmd_list;
     std::map<int, std::shared_ptr<b_node>> b_node_list;
-    /* Add B node */
-    //std::shared_ptr<b_node> p_hub_ = std::make_shared<p_hub>();
-    //std::shared_ptr<b_node> b_simple_node_a_ = std::make_shared<b_simple_node_a>();
-    //std::shared_ptr<b_node> b_simple_node_b_ = std::make_shared<b_simple_node_b>();
-    //std::shared_ptr<b_node> b_example_sub_servo_ = std::make_shared<b_example_sub_servo>();
-    //std::shared_ptr<b_node> b_example_pub_control_ = std::make_shared<b_example_pub_control>();   
+    std::map<std::string, std::shared_ptr<b_node>> node_list;
+    std::map<int, std::shared_ptr<b_node>> b_stored_node_list;
+    NodeStore b_node_store;
 public:
     b_hub(/* args */);
     ~b_hub();
     void End();
+    void store_node(b_node& stored_node, std::string node_name);
+    void show_stored_node();
     void exec_node(behavior_node_list node_type, behavior_node_list source_node_type);
+    void exec_node(std::string node_type_name, std::string unique_node_name, std::string setting_json_file_name, std::string setting_json_folder_name);
     void _exec_node(behavior_node_list node_type);
     void exit_node(behavior_node_list node_type);
     void _exit_node(behavior_node_list node_type);

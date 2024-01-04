@@ -1,10 +1,9 @@
 #include "b_node.hpp"
 
-void b_node::Start_Node(bool use_udp_communication, std::shared_ptr<node_cmd> hub_cmd)
+void b_node::Start_Node(std::shared_ptr<node_cmd> hub_cmd)
 {
     b_hub_cmd_ = hub_cmd;
-    //Start(use_udp_communication);
-    Start(use_udp_communication);
+    Start();
 }
 
 void b_node::_sys_cmd_executor()
@@ -13,7 +12,6 @@ void b_node::_sys_cmd_executor()
     if (node_sys_cmd_->cmd_stack_.size() != 0)
     {
         auto cmd = node_sys_cmd_->cmd_stack_.pop();
-        print_log("[sys_cmd_executor]" + get_b_node_name((behavior_node_list)cmd.cmd_code.source));
         switch ((b_node_sys_cmd_list)cmd.cmd_code.cmd_type)
         {
         // If it is not started, the command cannot be executed.
@@ -31,7 +29,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::STABLE)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and 
+                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::STABLE)){}
                     else
                     {
@@ -56,7 +54,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and 
+                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -72,7 +70,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and 
+                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -115,7 +113,7 @@ void b_node::_sys_cmd_executor()
             break;
         case b_node_sys_cmd_list::REQUIRE_NODE_LIST:
             print_log("[sys_cmd_executor]REQUIRE_NODE_LIST");
-            _start_node(this_node);    
+            _start_node(node_id_);
             break;
         default:
             print_log("[sys_cmd_executor]Invalid cmd_type");
@@ -124,39 +122,37 @@ void b_node::_sys_cmd_executor()
     }
 }
 
-void b_node::_start_node(behavior_node_list source_node)
+void b_node::_start_node(int source_node_id)
 {
-    print_log("[start_node]Load request nodes");
     st_node_cmd node_cmd;
-    for (auto &&requirement : requirement_b_node_list)
+
+    msgpack::sbuffer sbuf;
+
+    st_cmd_start_node cmd_data;
+    for (auto &&requirement : requirement_node_list)
     {
-        print_log("[start_node]" + get_b_node_name((behavior_node_list)requirement));
-        node_cmd.cmd_code.source = (int)source_node;
-        node_cmd.cmd_code.destination = (int)behavior_node_list::HUB;
+        print_log("[start_node][Send cmd to Hub][Type]" + requirement.node_type );
+        print_log("[start_node][Send cmd to Hub][Json]" + requirement.node_jsonfile );
+        print_log("[start_node][Send cmd to Hub][Folder]" + requirement.node_folder );
+
+        cmd_data.node_type = requirement.node_type;
+        cmd_data.setting_json_file_name = requirement.node_jsonfile;
+        cmd_data.setting_json_folder_name = requirement.node_folder;
+
+        msgpack::pack(sbuf, cmd_data);
+        uint8_t* ptr = (uint8_t*)sbuf.data();
+        size_t size = sbuf.size();
+
+        print_log("[start_node][Send cmd to Hub][Data Size]" + std::to_string(size));
+        std::memcpy(node_cmd.data, ptr, size);
+
+        node_cmd.cmd_code.source = node_id_;
+        node_cmd.cmd_code.destination = BEHAVIOR_HUB_ID;
         node_cmd.cmd_code.priority = 0;
         node_cmd.cmd_code.cmd_id = 0;
         node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::START_NODE;
-        node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
-
-        st_cmd_start_node* cmd_data; 
-        cmd_data = (st_cmd_start_node*)node_cmd.data;
-        cmd_data->node_type = requirement;
-
-        b_hub_cmd_->cmd_stack_.push(node_cmd);
-    }
-    for (auto &&requirement : requirement_p_node_list)
-    {
-        print_log("[start_node]" + get_p_node_name((physics_node_list)requirement));
-        node_cmd.cmd_code.source = (int)source_node;
-        node_cmd.cmd_code.destination = (int)behavior_node_list::HUB;
-        node_cmd.cmd_code.priority = 0;
-        node_cmd.cmd_code.cmd_id = 0;
-        node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::START_P_NODE;
-        node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
-
-        st_cmd_start_node* cmd_data; 
-        cmd_data = (st_cmd_start_node*)node_cmd.data;
-        cmd_data->node_type = requirement;
+        node_cmd.cmd_code.data_size = size;
+        node_cmd.cmd_code.is_used_msgpack = true;
 
         b_hub_cmd_->cmd_stack_.push(node_cmd);
     }
@@ -187,70 +183,47 @@ void b_node::set_config(nlohmann::json json_data)
     print_log("set config");
     node_config_.cmd_stack_size = json_data.at("cmd_stack_size");
     node_config_.sys_cmd_stack_size = json_data.at("sys_cmd_stack_size");
-    for (auto &&requirement : json_data.at("requirement"))
+    st_require_node_info requirement_node_info;
+    for (auto &&requirement : json_data.at("requirement_node_list"))
     {
-        if (requirement.at("system") == node_system_list::BEHAVIOR)
-        {
-            requirement_b_node_list.push_back(requirement.at("type"));
-            print_log("[requirement b node list]Node Name: " + get_b_node_name((behavior_node_list)requirement.at("type")) + " (" + std::to_string((int)requirement.at("type")) + ")");
-        }
-        else if (requirement.at("system") == node_system_list::PHYSICS)
-        {
-            requirement_p_node_list.push_back(requirement.at("type"));
-            print_log("[requirement p node list]Node Name: " + get_p_node_name((physics_node_list)requirement.at("type")) + " (" + std::to_string((int)requirement.at("type")) + ")");
-        }
+        requirement_node_info.node_type = requirement.at("node_type");
+        requirement_node_info.node_jsonfile = requirement.at("setting_json_file_name");
+        requirement_node_info.node_folder = requirement.at("setting_json_folder_name");
+        requirement_node_list.push_back(requirement_node_info);
+        print_log("[set requirement b node list]Node Type: " + requirement_node_info.node_type);
+        print_log("[set requirement b node list]Node Json File: " + requirement_node_info.node_jsonfile);
+        print_log("[set requirement b node list]Node Folder: " + requirement_node_info.node_folder);
     }
     _set_config(json_data);
 }
 
-void b_node::send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data)
+common_cmd_code b_node::get_invoice_to_hub()
 {
-    st_node_cmd node_cmd;
-    node_cmd.cmd_code.source = (int)this_node;
-    node_cmd.cmd_code.destination = (int)behavior_node_list::HUB;
-    node_cmd.cmd_code.priority = 0;
-    node_cmd.cmd_code.cmd_id = 0;
-    node_cmd.cmd_code.cmd_type = (int)cmd_type;
-    switch (cmd_type)
-    {
-    case b_hub_cmd_list::START_NODE:
-        node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
-        break;
-    case b_hub_cmd_list::END_NODE: 
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::PICK_SHARED_PTR:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::LOAD_NODE_LIST:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::START_P_NODE:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::DELETE_SHARED_PTR:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    default:
-        break;
-    }
-    b_hub_cmd_->cmd_stack_.push(node_cmd);
+    common_cmd_code cmd_code;
+    cmd_code.source = node_id_;
+    cmd_code.destination = 0;
+    cmd_code.priority = 0;
+    cmd_code.cmd_id = 0;
+
+    return cmd_code;
 }
 
+/*
 void b_node::send_sys_cmd_to_node(
-    b_hub_cmd_list cmd_type, 
-    std::uint8_t *cmd_data, 
+    b_hub_cmd_list cmd_type,
+    std::uint8_t *cmd_data,
     behavior_node_list destination_node)
 {
     st_node_cmd cmd;
-    cmd.cmd_code.source = (int)this_node;
+    cmd.cmd_code.source = node_id_;
     cmd.cmd_code.destination = (int)destination_node;
     cmd.cmd_code.priority = 0;
     cmd.cmd_code.cmd_id = 0;
     cmd.cmd_code.cmd_type = (int)cmd_type;
     cmd.cmd_code.data_size = 0;
-    //node_sys_cmd.second->cmd_stack_.push(cmd);    
+    //node_sys_cmd.second->cmd_stack_.push(cmd);
 }
+*/
 
 void b_node::initialize_processing()
 {
@@ -265,7 +238,6 @@ void b_node::ready_processing()
     {
         if (node_state.second->state_code.state_machine != node_state_machine::READY)
         {
-            print_log("[ready_processing]<<WARNING>>Not Ready: " + get_b_node_name((behavior_node_list)node_state.first));
         }
     }
     node_state_->state_code.state_machine = node_state_machine_;
@@ -281,7 +253,6 @@ void b_node::repair_processing()
         if (node_state.second->state_code.state_machine != node_state_machine::REPAIR or
             node_state.second->state_code.state_machine != node_state_machine::STABLE)
         {
-            print_log("[repair_processing]<<WARNING>>Not Repair: " + get_b_node_name((behavior_node_list)node_state.first));
             is_usable_state_machine = false;
         }
     }
@@ -301,7 +272,6 @@ void b_node::stable_processing()
     {
         if (node_state.second->state_code.state_machine != node_state_machine::STABLE)
         {
-            print_log("[stable_processing]<<WARNING>>Not Stable: " + get_b_node_name((behavior_node_list)node_state.first));
             is_same_state_machine = false;
         }
     }
@@ -335,7 +305,7 @@ void b_node::transit_processing()
         {
             if (node_sys_cmd.second != nullptr)
             {
-                cmd.cmd_code.source = (int)this_node;
+                cmd.cmd_code.source = node_id_;
                 cmd.cmd_code.destination = (int)node_sys_cmd.first;
                 cmd.cmd_code.priority = 0;
                 cmd.cmd_code.cmd_id = 0;
@@ -382,7 +352,7 @@ void b_node::transit_processing()
     }
 
     // Transit destination node state machine check
-    if (b_node_state_map.size() == requirement_b_node_list.size())
+    if (b_node_state_map.size() == requirement_node_list.size())
     {
         bool is_same_state_machine = true;
         for (auto &&node_state : b_node_state_map)
@@ -404,8 +374,8 @@ void b_node::transit_processing()
         {
             _change_node_state(prev_node_state_machine_, transit_destination_node_state_machine_);
             node_state_machine_ = transit_destination_node_state_machine_;
-            print_log("[transit_processing]Done: " 
-                    + get_node_state_machine_name(node_state_machine_) 
+            print_log("[transit_processing]Done: "
+                    + get_node_state_machine_name(node_state_machine_)
                     + " -> " + get_node_state_machine_name(transit_destination_node_state_machine_));
         }
     }
@@ -413,12 +383,28 @@ void b_node::transit_processing()
 
 void b_node::end_processing()
 {
-    send_cmd_to_hub(b_hub_cmd_list::DELETE_SHARED_PTR, nullptr);
+    st_node_cmd node_cmd;
+
+    node_cmd.cmd_code.source = node_id_;
+    node_cmd.cmd_code.destination = BEHAVIOR_HUB_ID;
+    node_cmd.cmd_code.priority = 0;
+    node_cmd.cmd_code.cmd_id = 0;
+    node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::DELETE_SHARED_PTR;
+    node_cmd.cmd_code.data_size = 0;
+    b_hub_cmd_->cmd_stack_.push(node_cmd);
 }
 
 bool b_node::any_to_initialize_processing()
 {
-    send_cmd_to_hub(b_hub_cmd_list::PICK_SHARED_PTR, nullptr);
+    st_node_cmd cmd;
+
+    cmd.cmd_code.source = node_id_;
+    cmd.cmd_code.destination = BEHAVIOR_HUB_ID;
+    cmd.cmd_code.priority = 0;
+    cmd.cmd_code.cmd_id = 0;
+    cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::PICK_SHARED_PTR;
+    cmd.cmd_code.data_size = 0;
+    b_hub_cmd_->cmd_stack_.push(cmd);
     return _any_to_initialize_processing();
 }
 
@@ -429,7 +415,7 @@ bool b_node::any_to_ready_processing()
     {
         if (node_sys_cmd.second != nullptr)
         {
-            cmd.cmd_code.source = (int)this_node;
+            cmd.cmd_code.source = node_id_;
             cmd.cmd_code.destination = (int)node_sys_cmd.first;
             cmd.cmd_code.priority = 0;
             cmd.cmd_code.cmd_id = 0;
@@ -448,7 +434,7 @@ bool b_node::any_to_force_stop_processing()
     {
         if (node_sys_cmd.second != nullptr)
         {
-            cmd.cmd_code.source = (int)this_node;
+            cmd.cmd_code.source = node_id_;
             cmd.cmd_code.destination = (int)node_sys_cmd.first;
             cmd.cmd_code.priority = 0;
             cmd.cmd_code.cmd_id = 0;
@@ -467,7 +453,7 @@ bool b_node::ready_to_stable_processing()
     {
         if (node_sys_cmd.second != nullptr)
         {
-            cmd.cmd_code.source = (int)this_node;
+            cmd.cmd_code.source = node_id_;
             cmd.cmd_code.destination = (int)node_sys_cmd.first;
             cmd.cmd_code.priority = 0;
             cmd.cmd_code.cmd_id = 0;
@@ -486,7 +472,7 @@ bool b_node::ready_to_repair_processing()
     {
         if (node_sys_cmd.second != nullptr)
         {
-            cmd.cmd_code.source = (int)this_node;
+            cmd.cmd_code.source = node_id_;
             cmd.cmd_code.destination = (int)node_sys_cmd.first;
             cmd.cmd_code.priority = 0;
             cmd.cmd_code.cmd_id = 0;
@@ -505,7 +491,7 @@ bool b_node::stable_to_repair_processing()
     {
         if (node_sys_cmd.second != nullptr)
         {
-            cmd.cmd_code.source = (int)this_node;
+            cmd.cmd_code.source = node_id_;
             cmd.cmd_code.destination = (int)node_sys_cmd.first;
             cmd.cmd_code.priority = 0;
             cmd.cmd_code.cmd_id = 0;
@@ -524,7 +510,7 @@ bool b_node::repair_to_stable_processing()
     {
         if (node_sys_cmd.second != nullptr)
         {
-            cmd.cmd_code.source = (int)this_node;
+            cmd.cmd_code.source = node_id_;
             cmd.cmd_code.destination = (int)node_sys_cmd.first;
             cmd.cmd_code.priority = 0;
             cmd.cmd_code.cmd_id = 0;
@@ -535,55 +521,46 @@ bool b_node::repair_to_stable_processing()
     }
     return _repair_to_stable_processing();
 }
-
-void b_node::set_relative_b_node_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> cmd)
-{
-    b_node_cmd_map[(int)node_type] = cmd;
-    print_log("[set_relative_b_node_cmd_ptr]" + get_b_node_name(node_type));
-}
-
-void b_node::set_relative_b_node_state_ptr(behavior_node_list node_type, std::shared_ptr<st_node_state> state)
-{
-    b_node_state_map[(int)node_type] = state;
-    print_log("[set_relative_b_node_state_ptr]" + get_b_node_name(node_type));
-}
-
-void b_node::set_relative_b_node_sys_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> sys_cmd)
-{
-    b_node_sys_cmd_map[(int)node_type] = sys_cmd;
-    print_log("[set_relative_b_node_sys_cmd_ptr]" + get_b_node_name(node_type));
-}
-
+/*
 void b_node::set_user_b_node_state_ptr(behavior_node_list node_type, std::shared_ptr<st_node_state> state)
 {
     user_b_node_state_map[(int)node_type] = state;
-    print_log("[set_user_b_node_state_ptr]" + get_b_node_name(node_type));
     print_log("[set_user_b_node_state_ptr]Total User:" + std::to_string(user_b_node_state_map.size()));
 }
+*/
 
-void b_node::set_relative_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state)
+void b_node::set_relative_node_name_and_id(
+                    std::string json_file_name_of_requirement_node,
+                    int node_id,
+                    std::string node_name)
 {
-    p_node_state_map[(int)node_type] = state;
-    print_log("[set_relative_p_node_state_ptr]" + get_p_node_name(node_type));
+    print_log("[set_relative_node_name_and_id][Json file]" + json_file_name_of_requirement_node);
+    print_log("[set_relative_node_name_and_id][Name]" + node_name);
+    print_log("[set_relative_node_name_and_id][ID]" + std::to_string(node_id));
+    rel_node_jsonfile2id_map[json_file_name_of_requirement_node] = node_id;
+    rel_node_jsonfile2name_map[json_file_name_of_requirement_node] = node_name;
+    rel_node_id2name_map[node_id] = node_name;
+    rel_node_name2id_map[node_name] = node_id;
+}
+void b_node::set_relative_node_cmd_ptr(int node_id, std::shared_ptr<node_cmd> cmd)
+{
+    b_node_cmd_map[node_id] = cmd;
+    print_log("[set_relative_node_cmd_ptr]" + rel_node_id2name_map[node_id]);
+}
+void b_node::set_relative_node_state_ptr(int node_id, std::shared_ptr<node_state> state)
+{
+    b_node_state_map[node_id] = state;
+    print_log("[set_relative_node_state_ptr]" + rel_node_id2name_map[node_id]);
+}
+void b_node::set_relative_node_sys_cmd_ptr(int node_id, std::shared_ptr<node_cmd> sys_cmd)
+{
+    b_node_sys_cmd_map[node_id] = sys_cmd;
+    print_log("[set_relative_node_sys_cmd_ptr]" + rel_node_id2name_map[node_id]);
 }
 
-void b_node::set_relative_p_node_cmd_ptr(physics_node_list node_type, std::shared_ptr<node_cmd> cmd)
+void b_node::set_node_id(int node_id)
 {
-    p_node_cmd_map[(int)node_type] = cmd;
-    print_log("[set_relative_p_node_cmd_ptr]" + get_p_node_name(node_type));
-}
-
-void b_node::set_relative_p_node_sys_cmd_ptr(physics_node_list node_type, std::shared_ptr<node_cmd> sys_cmd)
-{
-    p_node_sys_cmd_map[(int)node_type] = sys_cmd;
-    print_log("[set_relative_p_node_sys_cmd_ptr]" + get_p_node_name(node_type));
-}
-
-void b_node::set_user_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state)
-{
-    user_p_node_state_map[(int)node_type] = state;
-    print_log("[set_user_p_node_state_ptr]" + get_p_node_name(node_type));
-    print_log("[set_user_p_node_state_ptr]Total User:" + std::to_string(user_p_node_state_map.size()));
+    node_id_ = node_id;
 }
 
 void b_node::_change_node_state(node_state_machine prev_, node_state_machine transit_destination_)
@@ -594,7 +571,7 @@ void b_node::_change_node_state(node_state_machine prev_, node_state_machine tra
     case node_state_machine::INITIALIZING:
         if (prev_ != node_state_machine::FORCE_STOP)
         {
-            is_success = _any_to_initialize_processing_after();        
+            is_success = _any_to_initialize_processing_after();
         }
         break;
     case node_state_machine::READY:

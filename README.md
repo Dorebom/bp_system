@@ -1,5 +1,11 @@
 このプログラムはLGPLです．
 
+# 必要なパッケージ
+
+- [msgpack](https://github.com/msgpack/msgpack-c/tree/cpp_master)
+- [boost](https://github.com/boostorg/boost)
+- [JSON for Modern C++](https://github.com/nlohmann/json)
+
 # build and run
 
 ```

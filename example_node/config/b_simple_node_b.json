@@ -1,11 +1,12 @@
 {
     "node_name" : "b_simple_node_b",
-    "system" : 1,
+    "node_type" : "b_simple_node_b",
     "task_main_periodic_time" : 50000,
     "transit_watch_dog_time" : 1000.0,
     "cmd_stack_size" : 5,
     "sys_cmd_stack_size" : 2,
     "print_log" : true,
-    "requirement" : {
+    "use_udp_communication" : false,
+    "requirement_node_list" : {
     }
 }

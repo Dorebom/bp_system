@@ -17,11 +17,10 @@ node::~node()
 }
 
 /* ↓-- PUBLIC OPERATION --↓ */
-void node::Start(bool use_udp_communication)
+void node::Start()
 {
     if (is_main_thread_running_ == false)
     {
-        use_udp_communication_ = use_udp_communication;
         _preconfigure(config_file_name_);
         std::thread t_main(&node::_task_main, this);
         t_main.detach();
@@ -30,12 +29,13 @@ void node::Start(bool use_udp_communication)
             print_log("Main Thread Executing...");
             std::this_thread::sleep_for(std::chrono::microseconds(100000));
         }
-        if (use_udp_communication){
+        if (use_udp_communication_){
             std::thread t_recv(&node::_task_recv, this);
             std::thread t_send(&node::_task_send, this);
             t_recv.detach();
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
             t_send.detach();
-        }    
+        }
     }
     else
     {
@@ -89,7 +89,7 @@ void node::_task_send()
     print_log("Sleep time: " + std::to_string((int)(node_config_.task_send_periodic_time * 0.001)) + "ms");
     while (is_main_thread_running_)
     {
-        if (is_accepted_comm_udp_)
+        if (is_allowed_comm_udp_)
         {
             comm_udp_.send_data(reinterpret_cast<uint8_t*>(&send_data_), sizeof(st_node_cmd));
         }
@@ -107,7 +107,7 @@ void node::_task_recv()
     int recv_data_size = 0;
     while (is_main_thread_running_)
     {
-        if (is_accepted_comm_udp_)
+        if (is_allowed_comm_udp_)
         {
             recv_data_size = comm_udp_.recv_data(reinterpret_cast<uint8_t*>(&recv_data_), sizeof(st_node_cmd));
             if (recv_data_size > 0)
@@ -136,8 +136,7 @@ void node::_task_main()
     is_main_thread_running_ = true;
     _reset_internal_status();
     _configure();
-    is_accepted_comm_udp_ = true;
-    
+    is_allowed_comm_udp_ = true;
 
     while (is_main_thread_running_)
     {
@@ -160,9 +159,9 @@ void node::node_processing()
     // 2.0 切り替え処理 か ループ処理を実行
     if (signal_to_change_node_state and node_state_machine_ != node_state_machine::TRANSITING)
     {   // 2.1. 切り替え処理を実行
-        print_log("[change_processing]CHANGE NODE " 
-            + get_node_state_machine_name(node_state_machine_) + " -> " 
-            + get_node_state_machine_name(cmd_node_state_machine_));    
+        print_log("[change_processing]CHANGE NODE "
+            + get_node_state_machine_name(node_state_machine_) + " -> "
+            + get_node_state_machine_name(cmd_node_state_machine_));
         change_node_state(cmd_node_state_machine_, true);
         signal_to_change_node_state = false;
     }
@@ -276,7 +275,7 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
         case node_state_machine::INITIALIZING:
             if (node_state_machine_ != node_state_machine::FORCE_STOP)
             {
-                is_success = any_to_initialize_processing();        
+                is_success = any_to_initialize_processing();
             }
             break;
         case node_state_machine::READY:
@@ -361,7 +360,7 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
             break;
         }
 
-        if (is_success) 
+        if (is_success)
         {
             node_state_machine_ = cmd_node_state_machine_;
         }
@@ -432,17 +431,18 @@ void node::_load_json_config(std::string config_file)
     //std::cout << std::filesystem::current_path() << std::endl;
     nlohmann::json j;
     std::ifstream i(config_directory_name_ + config_file);
-    //std::ifstream i(std::string(CONFIG_FOLDER) + config_file);
     if (!i) {
         std::cerr << "ファイルオープンに失敗" << std::endl;
         std::exit(1);
     }
     i >> j;
-    
+
     node_config_.node_name = j["node_name"];
+    node_config_.node_type = j["node_type"];
     // Threads
     node_config_.task_main_periodic_time = j["task_main_periodic_time"];
     // Communication
+    use_udp_communication_ = (bool)j["use_udp_communication"];
     if (use_udp_communication_){
         node_config_.task_recv_periodic_time = j["task_recv_periodic_time"];
         node_config_.task_send_periodic_time = j["task_send_periodic_time"];
@@ -477,7 +477,7 @@ void node::_reset_internal_status()
 
     is_occured_error_ = false;
     is_occured_warning_ = false;
-    is_accepted_comm_udp_ = false;
+    is_allowed_comm_udp_ = false;
 
     signal_to_release_force_stop = false;
     signal_to_execute_force_stop = false;

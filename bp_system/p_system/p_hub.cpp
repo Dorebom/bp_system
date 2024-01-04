@@ -9,7 +9,6 @@ p_hub::p_hub(/* args */)
     node_state_machine_ = node_state_machine::UNCONFIGURED;
     cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
 
-    this_node = behavior_node_list::PHYSICS_HUB;
     set_config_file_name(PHYSICS_HUB_CONFIG_FILE);
 }
 

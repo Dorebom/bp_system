@@ -6,6 +6,7 @@ struct node_config
 {
     /* data */
     std::string node_name;
+    std::string node_type;
 
     int task_recv_periodic_time;
     int task_send_periodic_time;
@@ -22,7 +23,8 @@ struct node_config
 
     node_config()
     {
-        node_name = "node hogehoge";
+        node_name = "node_name";
+        node_type = "node_type";
         task_recv_periodic_time = 100000;
         task_send_periodic_time = 100000;
         task_main_periodic_time = 100000;
