@@ -428,7 +428,7 @@ void node::_preconfigure(std::string config_file)
 
 void node::_load_json_config(std::string config_file)
 {
-    //std::cout << std::filesystem::current_path() << std::endl;
+    std::cout << std::filesystem::current_path() << std::endl;
     nlohmann::json j;
     std::ifstream i(config_directory_name_ + config_file);
     if (!i) {

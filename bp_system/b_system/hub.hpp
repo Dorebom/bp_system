@@ -70,6 +70,7 @@ private:
 
 public:
     hub(/* args */);
+    hub(std::string setting_json_file_name, std::string setting_json_folder_name);
     ~hub();
     void store_node(b_node& stored_node, std::string node_name);
     void show_stored_node();

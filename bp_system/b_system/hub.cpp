@@ -15,6 +15,16 @@ hub::hub(/* args */)
     set_config_file_name(BEHAVIOR_HUB_CONFIG_FILE);
 }
 
+hub::hub(std::string setting_json_file_name, std::string setting_json_folder_name)
+{
+    is_main_thread_running_ = false;
+    node_state_machine_ = node_state_machine::UNCONFIGURED;
+    cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
+    allocated_node_id = 0;
+    set_config_file_name(setting_json_file_name);
+    set_config_directory_name(setting_json_folder_name);
+}
+
 hub::~hub()
 {
 }
