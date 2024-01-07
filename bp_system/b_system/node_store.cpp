@@ -20,13 +20,14 @@ std::shared_ptr<b_node> NodeStore::get_node(std::string node_name)
     if (it != stored_node_list.end()) {
         return it->second->Clone();
     } else {
+        std::cout << "[behavior_hub][NodeStore]Node type name is not found." << std::endl;
         return nullptr;
     }
 }
 
 void NodeStore::show_stored_node()
 {
-    std::cout << "[behavior_hub][NodeStore]stored nodes is follows:" << std::endl;
+    std::cout << "[behavior_hub][NodeStore]Stored node type's list is follows:" << std::endl;
 
     for (const auto & pair : stored_node_list)
     {

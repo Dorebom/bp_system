@@ -96,7 +96,7 @@ void b_example_sub_servo::_set_state()
 {
     // Set node state
     node_state_->state_code.state_machine = node_state_machine_;
-    state_->state_machine = node_state_machine_;    
+    state_->state_machine = node_state_machine_;
 }
 
 void b_example_sub_servo::cmd_executor()
@@ -131,7 +131,7 @@ void b_example_sub_servo::cmd_executor()
                     break;
                 case cmd_example_servo_type::RELEASE_FORCE_STOP:
                     ReleaseForceStop();
-                    break;            
+                    break;
                 default:
                     break;
             }
