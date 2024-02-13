@@ -124,6 +124,7 @@ void b_node::_sys_cmd_executor()
 
 void b_node::_start_node(int source_node_id)
 {
+    int requirement_node_cnt = 0;
     st_node_cmd node_cmd;
 
     msgpack::sbuffer sbuf;
@@ -155,6 +156,21 @@ void b_node::_start_node(int source_node_id)
         node_cmd.cmd_code.is_used_msgpack = true;
 
         b_hub_cmd_->cmd_stack_.push(node_cmd);
+
+        sbuf.clear();
+        requirement_node_cnt++;
+    }
+    if (requirement_node_cnt == 0)
+    {
+        print_log("[start_node]No requirement node");
+    }
+    else
+    {
+        print_log("[start_node]Requirement node count: " + std::to_string(requirement_node_cnt));
+        if (requirement_node_cnt == requirement_node_list.size())
+        {
+            print_log("[start_node]All requirement node is sent");
+        }
     }
 }
 

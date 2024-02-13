@@ -87,6 +87,9 @@ void node::_task_send()
 {
     print_log("Send Thread Start");
     print_log("Sleep time: " + std::to_string((int)(node_config_.task_send_periodic_time * 0.001)) + "ms");
+
+    comm_udp_.set_send_address(node_config_.send_ip.c_str(), node_config_.send_port);
+
     while (is_main_thread_running_)
     {
         if (is_allowed_comm_udp_)
@@ -103,6 +106,9 @@ void node::_task_recv()
     //RecvData recv_data_;
     print_log("Recv Thread Start");
     print_log("Sleep time: " + std::to_string((int)(node_config_.task_recv_periodic_time * 0.001)) + "ms");
+
+    comm_udp_.set_recv_address(node_config_.recv_ip.c_str(), node_config_.recv_port);
+
     st_node_cmd recv_data_;
     int recv_data_size = 0;
     while (is_main_thread_running_)

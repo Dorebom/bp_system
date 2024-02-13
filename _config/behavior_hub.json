@@ -1,7 +1,7 @@
 {
     "node_name" : "behavior_hub",
     "node_type" : "behavior_hub",
-    "use_udp_communication" : true,
+    "use_udp_communication" : false,
     "task_recv_periodic_time" : 500000,
     "task_send_periodic_time" : 500000,
     "task_main_periodic_time" : 10000,

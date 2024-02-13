@@ -327,7 +327,8 @@ void hub::pick_shared_ptr(int node_id)
         running_node_list[waiting_node_id]->set_relative_node_sys_cmd_ptr(node_id, node_sys_cmd_list[node_id]);
         waiting_node_list.erase(node_id);
     }
-    send_your_requirement_node_list(allocated_node_id);
+    print_log("pick_shared_ptr: " + running_node_id2name_list[node_id] + " is done");
+    send_your_requirement_node_list(node_id);
 }
 
 void hub::send_your_requirement_node_list(int node_id)

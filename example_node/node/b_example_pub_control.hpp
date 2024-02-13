@@ -5,7 +5,6 @@
 #include "_common/node_cmd.hpp"
 #include "_common/node_state.hpp"
 // List
-#include "_common/node_list.hpp"
 #include "b_system/b_hub_cmd/b_hub_cmd_list.hpp"
 #include "../data_struct/state/b_node_state_list.hpp"
 #include "../data_struct/cmd/b_node_cmd_list.hpp"
@@ -21,7 +20,7 @@ private:
     void _stable_processing() override;
     void _force_stop_processing() override;
     void _end_processing() override;
-    
+
     /* once node state change process */
     bool _any_to_initialize_processing() override;
     bool _any_to_ready_processing() override;
