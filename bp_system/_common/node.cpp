@@ -35,7 +35,7 @@ void node::Start(bool use_udp_communication)
             std::thread t_send(&node::_task_send, this);
             t_recv.detach();
             t_send.detach();
-        }    
+        }
     }
     else
     {
@@ -137,7 +137,6 @@ void node::_task_main()
     _reset_internal_status();
     _configure();
     is_accepted_comm_udp_ = true;
-    
 
     while (is_main_thread_running_)
     {
@@ -158,11 +157,11 @@ void node::node_processing()
     generate_signal_to_chenge_node_state();
 
     // 2.0 切り替え処理 か ループ処理を実行
-    if (signal_to_change_node_state and node_state_machine_ != node_state_machine::TRANSITING)
+    if ((signal_to_change_node_state) && (node_state_machine_ != node_state_machine::TRANSITING))
     {   // 2.1. 切り替え処理を実行
-        print_log("[change_processing]CHANGE NODE " 
-            + get_node_state_machine_name(node_state_machine_) + " -> " 
-            + get_node_state_machine_name(cmd_node_state_machine_));    
+        print_log("[change_processing]CHANGE NODE "
+            + get_node_state_machine_name(node_state_machine_) + " -> "
+            + get_node_state_machine_name(cmd_node_state_machine_));
         change_node_state(cmd_node_state_machine_, true);
         signal_to_change_node_state = false;
     }
@@ -228,7 +227,7 @@ void node::generate_signal_to_chenge_node_state()
                 cmd_node_state_machine_ = node_state_machine::READY;
                 signal_to_reset_node = false;
             }
-            else if (signal_to_change_stable and is_occured_warning_ == false)
+            else if (signal_to_change_stable && is_occured_warning_ == false)
             {
                 signal_to_change_node_state = true;
                 cmd_node_state_machine_ = node_state_machine::STABLE;
@@ -242,14 +241,14 @@ void node::generate_signal_to_chenge_node_state()
             }
             break;
         case node_state_machine::READY:
-            if (signal_to_change_stable and is_occured_warning_ == false
-                and is_occured_error_ == false)
+            if (signal_to_change_stable && is_occured_warning_ == false
+                && is_occured_error_ == false)
             {
                 signal_to_change_node_state = true;
                 cmd_node_state_machine_ = node_state_machine::STABLE;
                 signal_to_change_stable = false;
             }
-            else if (signal_to_change_repair and is_occured_error_ == false)
+            else if (signal_to_change_repair && is_occured_error_ == false)
             {
                 signal_to_change_node_state = true;
                 cmd_node_state_machine_ = node_state_machine::REPAIR;
@@ -320,7 +319,7 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
                 }
                 break;
             case node_state_machine::READY:
-                if (is_occured_error_ == false and is_occured_warning_ == false)
+                if (is_occured_error_ == false && is_occured_warning_ == false)
                 {
                     is_success = ready_to_stable_processing();
                 }
@@ -361,7 +360,7 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
             break;
         }
 
-        if (is_success) 
+        if (is_success)
         {
             node_state_machine_ = cmd_node_state_machine_;
         }
@@ -434,11 +433,12 @@ void node::_load_json_config(std::string config_file)
     std::ifstream i(config_directory_name_ + config_file);
     //std::ifstream i(std::string(CONFIG_FOLDER) + config_file);
     if (!i) {
-        std::cerr << "ファイルオープンに失敗" << std::endl;
+        std::cerr << "ERROR: Cannot open file" << std::endl;
+        std::cerr << config_directory_name_ + config_file << std::endl;
         std::exit(1);
     }
     i >> j;
-    
+
     node_config_.node_name = j["node_name"];
     // Threads
     node_config_.task_main_periodic_time = j["task_main_periodic_time"];

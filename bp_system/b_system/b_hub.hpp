@@ -54,7 +54,7 @@ private:
 
     std::vector<int> running_node_list;
     bool check_usable_node_list(const behavior_node_list value);
-    
+
     void cmd_executor();
     void _sys_cmd_executor();
     std::vector<int> requirement_list;
@@ -69,7 +69,7 @@ private:
     //std::shared_ptr<b_node> b_simple_node_a_ = std::make_shared<b_simple_node_a>();
     //std::shared_ptr<b_node> b_simple_node_b_ = std::make_shared<b_simple_node_b>();
     //std::shared_ptr<b_node> b_example_sub_servo_ = std::make_shared<b_example_sub_servo>();
-    //std::shared_ptr<b_node> b_example_pub_control_ = std::make_shared<b_example_pub_control>();   
+    //std::shared_ptr<b_node> b_example_pub_control_ = std::make_shared<b_example_pub_control>();
 public:
     b_hub(/* args */);
     ~b_hub();

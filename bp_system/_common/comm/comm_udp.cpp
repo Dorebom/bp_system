@@ -3,9 +3,9 @@
 
 CommUdp::CommUdp(/* args */)
 {
-    // Init Recv 
+    // Init Recv
     //set_recv_address(UDP_RECV_IP, UDP_PORT_RECV);
-    // Init Send 
+    // Init Send
     //set_send_address(UDP_SEND_IP, UDP_PORT_SEND);
 }
 

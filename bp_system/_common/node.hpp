@@ -2,7 +2,7 @@
 
 #include "json.hpp"
 
-#include "../_common/comm/comm_udp.hpp" 
+#include "../_common/comm/comm_udp.hpp"
 
 #include "node_state_machine.hpp"
 #include "node_config.hpp"

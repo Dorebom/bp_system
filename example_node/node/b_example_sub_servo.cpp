@@ -8,7 +8,7 @@
 
 void b_example_sub_servo::_update_servo_state(int add_value)
 {
-    if(node_state_machine_ == node_state_machine::STABLE or node_state_machine_ == node_state_machine::REPAIR)
+    if(node_state_machine_ == node_state_machine::STABLE || node_state_machine_ == node_state_machine::REPAIR)
     {
         state_->encoder_count += add_value;
     }
@@ -96,7 +96,7 @@ void b_example_sub_servo::_set_state()
 {
     // Set node state
     node_state_->state_code.state_machine = node_state_machine_;
-    state_->state_machine = node_state_machine_;    
+    state_->state_machine = node_state_machine_;
 }
 
 void b_example_sub_servo::cmd_executor()
@@ -131,7 +131,7 @@ void b_example_sub_servo::cmd_executor()
                     break;
                 case cmd_example_servo_type::RELEASE_FORCE_STOP:
                     ReleaseForceStop();
-                    break;            
+                    break;
                 default:
                     break;
             }

@@ -34,7 +34,7 @@ protected:
     virtual void _set_config(nlohmann::json json_data) = 0;
     void send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data);
     void send_sys_cmd_to_node(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data, behavior_node_list destination_node);
-    
+
     /* node_state loop process */
     void initialize_processing() override;
     void ready_processing() override;
@@ -95,7 +95,7 @@ public:
     std::shared_ptr<node_cmd> get_cmd_ptr()
     {
         return node_cmd_;
-    }   
+    }
     std::shared_ptr<node_cmd> get_sys_cmd_ptr()
     {
         return node_sys_cmd_;

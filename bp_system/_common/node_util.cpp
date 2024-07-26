@@ -75,7 +75,7 @@ std::string get_node_state_machine_name(node_state_machine state)
         break;
     case node_state_machine::UNCONFIGURED:
         return "UNCONFIGURED";
-        break;    
+        break;
     default:
         return "unknown";
         break;

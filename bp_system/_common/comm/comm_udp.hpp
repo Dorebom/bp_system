@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <cstdint>
 
-#ifdef __linux__ 
+#ifdef __linux__
     #include <sys/socket.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
@@ -26,7 +26,7 @@ class CommUdp
 {
 private:
     /* data */
-#ifdef __linux__ 
+#ifdef __linux__
     int recv_socket;
     int send_socket;
     struct sockaddr_in recv_address;

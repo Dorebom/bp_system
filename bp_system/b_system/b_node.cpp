@@ -31,7 +31,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::STABLE)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and 
+                        || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::STABLE)){}
                     else
                     {
@@ -56,7 +56,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and 
+                        || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -72,7 +72,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and 
+                        || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -115,7 +115,7 @@ void b_node::_sys_cmd_executor()
             break;
         case b_node_sys_cmd_list::REQUIRE_NODE_LIST:
             print_log("[sys_cmd_executor]REQUIRE_NODE_LIST");
-            _start_node(this_node);    
+            _start_node(this_node);
             break;
         default:
             print_log("[sys_cmd_executor]Invalid cmd_type");
@@ -138,7 +138,7 @@ void b_node::_start_node(behavior_node_list source_node)
         node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::START_NODE;
         node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
 
-        st_cmd_start_node* cmd_data; 
+        st_cmd_start_node* cmd_data;
         cmd_data = (st_cmd_start_node*)node_cmd.data;
         cmd_data->node_type = requirement;
 
@@ -154,7 +154,7 @@ void b_node::_start_node(behavior_node_list source_node)
         node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::START_P_NODE;
         node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
 
-        st_cmd_start_node* cmd_data; 
+        st_cmd_start_node* cmd_data;
         cmd_data = (st_cmd_start_node*)node_cmd.data;
         cmd_data->node_type = requirement;
 
@@ -216,7 +216,7 @@ void b_node::send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data)
     case b_hub_cmd_list::START_NODE:
         node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
         break;
-    case b_hub_cmd_list::END_NODE: 
+    case b_hub_cmd_list::END_NODE:
         node_cmd.cmd_code.data_size = 0;
         break;
     case b_hub_cmd_list::PICK_SHARED_PTR:
@@ -238,8 +238,8 @@ void b_node::send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data)
 }
 
 void b_node::send_sys_cmd_to_node(
-    b_hub_cmd_list cmd_type, 
-    std::uint8_t *cmd_data, 
+    b_hub_cmd_list cmd_type,
+    std::uint8_t *cmd_data,
     behavior_node_list destination_node)
 {
     st_node_cmd cmd;
@@ -249,7 +249,7 @@ void b_node::send_sys_cmd_to_node(
     cmd.cmd_code.cmd_id = 0;
     cmd.cmd_code.cmd_type = (int)cmd_type;
     cmd.cmd_code.data_size = 0;
-    //node_sys_cmd.second->cmd_stack_.push(cmd);    
+    //node_sys_cmd.second->cmd_stack_.push(cmd);
 }
 
 void b_node::initialize_processing()
@@ -278,7 +278,7 @@ void b_node::repair_processing()
     bool is_usable_state_machine = true;
     for (auto &&node_state : user_b_node_state_map)
     {
-        if (node_state.second->state_code.state_machine != node_state_machine::REPAIR or
+        if (node_state.second->state_code.state_machine != node_state_machine::REPAIR ||
             node_state.second->state_code.state_machine != node_state_machine::STABLE)
         {
             print_log("[repair_processing]<<WARNING>>Not Repair: " + get_b_node_name((behavior_node_list)node_state.first));
@@ -404,8 +404,8 @@ void b_node::transit_processing()
         {
             _change_node_state(prev_node_state_machine_, transit_destination_node_state_machine_);
             node_state_machine_ = transit_destination_node_state_machine_;
-            print_log("[transit_processing]Done: " 
-                    + get_node_state_machine_name(node_state_machine_) 
+            print_log("[transit_processing]Done: "
+                    + get_node_state_machine_name(node_state_machine_)
                     + " -> " + get_node_state_machine_name(transit_destination_node_state_machine_));
         }
     }
@@ -594,7 +594,7 @@ void b_node::_change_node_state(node_state_machine prev_, node_state_machine tra
     case node_state_machine::INITIALIZING:
         if (prev_ != node_state_machine::FORCE_STOP)
         {
-            is_success = _any_to_initialize_processing_after();        
+            is_success = _any_to_initialize_processing_after();
         }
         break;
     case node_state_machine::READY:

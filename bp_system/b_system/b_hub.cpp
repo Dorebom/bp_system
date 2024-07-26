@@ -4,7 +4,9 @@
 #include <chrono>
 #include <type_traits>
 
-#include <unistd.h>
+#ifdef __linux__
+    #include <unistd.h>
+#endif
 
 b_hub::b_hub(/* args */)
 {
@@ -36,27 +38,27 @@ void b_hub::End()
 }
 
 /* node_state loop process */
-void b_hub::initialize_processing() 
+void b_hub::initialize_processing()
 {
     cmd_executor();
 }
-void b_hub::ready_processing() 
+void b_hub::ready_processing()
 {
     cmd_executor();
 }
-void b_hub::repair_processing() 
+void b_hub::repair_processing()
 {
     cmd_executor();
 }
-void b_hub::stable_processing() 
+void b_hub::stable_processing()
 {
     cmd_executor();
 }
-void b_hub::force_stop_processing() 
+void b_hub::force_stop_processing()
 {
     cmd_executor();
 }
-void b_hub::transit_processing() 
+void b_hub::transit_processing()
 {
     uint64_t now_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     if (now_time - transit_start_time_ > node_config_.transit_watch_dog_time)
@@ -80,12 +82,12 @@ void b_hub::end_processing()
 
 /* node state change process */
 // -> initialize
-bool b_hub::any_to_initialize_processing() 
+bool b_hub::any_to_initialize_processing()
 {
     return true;
 }
 // -> ready (reset process)
-bool b_hub::any_to_ready_processing() 
+bool b_hub::any_to_ready_processing()
 {
     if (node_state_machine_ == node_state_machine::FORCE_STOP)
     {
@@ -101,22 +103,22 @@ bool b_hub::any_to_force_stop_processing()
 } // stable, repair and ready
 
 // -> normal flow
-bool b_hub::ready_to_repair_processing() 
+bool b_hub::ready_to_repair_processing()
 {
     b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeRepair();
     return true;
 }
-bool b_hub::ready_to_stable_processing() 
+bool b_hub::ready_to_stable_processing()
 {
     b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeStable();
     return true;
 }
-bool b_hub::repair_to_stable_processing() 
+bool b_hub::repair_to_stable_processing()
 {
     b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeStable();
     return true;
 }
-bool b_hub::stable_to_repair_processing() 
+bool b_hub::stable_to_repair_processing()
 {
     b_node_list[(int)behavior_node_list::PHYSICS_HUB]->ChangeRepair();
     return true;
@@ -134,7 +136,7 @@ void b_hub::set_config(nlohmann::json json_data) {
     node_config_.sys_cmd_stack_size = json_data["sys_cmd_stack_size"];
 }
 
-void b_hub::_configure() 
+void b_hub::_configure()
 {
     // Make shared ptr
     node_state_ = std::make_shared<node_state>();
@@ -150,7 +152,7 @@ void b_hub::_configure()
     }
 }
 
-void b_hub::_set_state() 
+void b_hub::_set_state()
 {
     node_state_->state_code.state_machine = node_state_machine_;
 }
@@ -158,15 +160,15 @@ void b_hub::_set_state()
 bool b_hub::check_usable_node_list(const behavior_node_list node_type)
 {
     std::vector<int> result;
-    for (auto value = static_cast<std::underlying_type_t<behavior_node_list>>(behavior_node_list::HUB); 
-         value < static_cast<std::underlying_type_t<behavior_node_list>>(behavior_node_list::PERIOD_NODE); 
+    for (auto value = static_cast<std::underlying_type_t<behavior_node_list>>(behavior_node_list::HUB);
+         value < static_cast<std::underlying_type_t<behavior_node_list>>(behavior_node_list::PERIOD_NODE);
          value++)
     {
         result.push_back(static_cast<int>(value));
         //std::cout << "[" << node_config_.node_name << "][check_usable_node_list]" << result[value] << std::endl;
     }
     std::vector<int>::iterator itr;
-    itr = std::find(result.begin(), result.end(), (int)node_type);    
+    itr = std::find(result.begin(), result.end(), (int)node_type);
 
     if (itr == result.end())
     {
@@ -351,12 +353,12 @@ void b_hub::pick_shared_ptr(behavior_node_list node_type)
 
     print_log("Waiting cmd list");
     for (const auto& pair : waiting_cmd_list) {
-        print_log("Item: " + get_b_node_name((behavior_node_list)pair.first) 
+        print_log("Item: " + get_b_node_name((behavior_node_list)pair.first)
                 + ", Ordered user: " + get_b_node_name((behavior_node_list)pair.second));
     }
     print_log("Waiting state list");
     for (const auto& pair : waiting_state_list) {
-        print_log("Item: " + get_b_node_name((behavior_node_list)pair.first) 
+        print_log("Item: " + get_b_node_name((behavior_node_list)pair.first)
                 + ", Ordered user: " + get_b_node_name((behavior_node_list)pair.second));
     }
     
@@ -366,7 +368,7 @@ void b_hub::pick_shared_ptr(behavior_node_list node_type)
         {
             b_node_list[(int)waiting_cmd_list.find((int)node_type)->second]
             ->set_relative_b_node_cmd_ptr(
-                (behavior_node_list)node_type, 
+                (behavior_node_list)node_type,
                 node_cmd_list[(int)node_type]);
             waiting_cmd_list.erase((int)node_type);
         }
@@ -377,7 +379,7 @@ void b_hub::pick_shared_ptr(behavior_node_list node_type)
         {
             b_node_list[(int)waiting_state_list.find((int)node_type)->second]
             ->set_relative_b_node_state_ptr(
-                (behavior_node_list)node_type, 
+                (behavior_node_list)node_type,
                 node_state_list[(int)node_type]);
 
             b_node_list[(int)node_type]->set_user_b_node_state_ptr(
