@@ -9,7 +9,6 @@ b_simple_node_a::b_simple_node_a(/* args */)
     node_state_machine_ = node_state_machine::UNCONFIGURED;
     cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
 
-    this_node = behavior_node_list::SIMPLE_NODE_A;
     set_config_directory_name(B_NODE_CONFIG_DIRECTORY);
     set_config_file_name(B_NODE_CONFIG_FILE);
 }

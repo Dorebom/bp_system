@@ -5,11 +5,10 @@
 #include "_common/node_cmd.hpp"
 #include "_common/node_state.hpp"
 // List
-#include "_common/node_list.hpp"
 #include "b_system/b_hub_cmd/b_hub_cmd_list.hpp"
 
 class b_simple_node_a : public b_node
-{   
+{
 private:
     /* data */
     /* node_state loop process */
@@ -48,4 +47,7 @@ private:
 public:
     b_simple_node_a(/* args */);
     ~b_simple_node_a();
+    std::shared_ptr<b_node> Clone() const override{
+        return std::make_shared<b_simple_node_a>(*this);
+    }
 };  // class simple_node_a

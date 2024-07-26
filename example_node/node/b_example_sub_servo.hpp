@@ -5,7 +5,6 @@
 #include "_common/node_cmd.hpp"
 #include "_common/node_state.hpp"
 // List
-#include "_common/node_list.hpp"
 #include "b_system/b_hub_cmd/b_hub_cmd_list.hpp"
 #include "../data_struct/state/b_node_state_list.hpp"
 #include "../data_struct/cmd/b_node_cmd_list.hpp"
@@ -45,7 +44,7 @@ private:
     void _set_config(nlohmann::json json_data) override;
     void _set_state() override;
     void cmd_executor();
-    
+
     /* data */
     state_example_servo* state_;
 
@@ -56,4 +55,7 @@ private:
 public:
     b_example_sub_servo(/* args */);
     ~b_example_sub_servo();
+    std::shared_ptr<b_node> Clone() const override{
+        return std::make_shared<b_example_sub_servo>(*this);
+    }
 }; // class b_example_sub_servo

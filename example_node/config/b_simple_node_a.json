@@ -1,13 +1,15 @@
 {
     "node_name" : "b_simple_node_a",
-    "system" : 1,
+    "node_type" : "b_simple_node_a",
     "task_main_periodic_time" : 50000,
     "transit_watch_dog_time" : 1000.0,
     "cmd_stack_size" : 5,
     "sys_cmd_stack_size" : 2,
     "print_log" : true,
-    "requirement" : {
-        "b_simple_node_b" : {"type" : 3, "system" : 1},
-        "p_simple_node_a" : {"type" : 1, "system" : 2}
+    "use_udp_communication" : false,
+    "requirement_node_list" : {
+        "node_b1" : {"node_type" : "b_simple_node_b",
+                     "setting_json_file_name" : "b_simple_node_b.json",
+                     "setting_json_folder_name" : "../bp_system/example_node/config/"}
     }
 }

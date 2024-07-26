@@ -9,7 +9,6 @@ b_simple_node_b::b_simple_node_b(/* args */)
     node_state_machine_ = node_state_machine::UNCONFIGURED;
     cmd_node_state_machine_ = node_state_machine::UNCONFIGURED;
 
-    this_node = behavior_node_list::SIMPLE_NODE_B;
     set_config_directory_name(B_NODE_CONFIG_DIRECTORY);
     set_config_file_name(B_NODE_CONFIG_FILE);
 }
@@ -66,7 +65,7 @@ bool b_simple_node_b::_ready_to_stable_processing_after(){return true;}
 bool b_simple_node_b::_repair_to_stable_processing_after(){return true;}
 bool b_simple_node_b::_stable_to_repair_processing_after(){return true;}
 
-void b_simple_node_b::_set_config(nlohmann::json json_data) 
+void b_simple_node_b::_set_config(nlohmann::json json_data)
 {
 }
 void b_simple_node_b::_configure()

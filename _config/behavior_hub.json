@@ -1,6 +1,7 @@
 {
     "node_name" : "behavior_hub",
-    "system" : 1,
+    "node_type" : "behavior_hub",
+    "use_udp_communication" : false,
     "task_recv_periodic_time" : 500000,
     "task_send_periodic_time" : 500000,
     "task_main_periodic_time" : 10000,
@@ -11,8 +12,7 @@
     "transit_watch_dog_time" : 1000.0,
     "cmd_stack_size" : 10,
     "sys_cmd_stack_size" : 5,
-    "print_log" : false,
-    "requirement" : {
-        "physics_hub" : {"type" : 1}
+    "print_log" : true,
+    "requirement_node_list" : {
     }
 }

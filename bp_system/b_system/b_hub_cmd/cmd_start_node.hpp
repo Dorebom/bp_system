@@ -1,14 +1,22 @@
 #pragma once
 
+#include <string>
+#include <msgpack.hpp>
+
 struct st_cmd_start_node
 {
-    int check_cmd_type;
-    int node_type;
-    bool use_udp_communication;
+    std::string node_type;
+    std::string setting_json_file_name;
+    std::string setting_json_folder_name;
     st_cmd_start_node(/* args */)
-    {
-        check_cmd_type = 0;
-        node_type = 0;
-        use_udp_communication = false;
-    }
+    : node_type("")
+    , setting_json_file_name("")
+    , setting_json_folder_name("")
+    {}
+    st_cmd_start_node(std::string node_type_, std::string setting_json_file_name_, std::string setting_json_folder_name_)
+    : node_type(node_type_)
+    , setting_json_file_name(setting_json_file_name_)
+    , setting_json_folder_name(setting_json_folder_name_)
+    {}
+    MSGPACK_DEFINE(node_type, setting_json_file_name, setting_json_folder_name);
 };

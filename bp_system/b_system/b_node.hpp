@@ -5,15 +5,26 @@
 #include "../_common/node_cmd.hpp"
 #include "b_node_sys_cmd/b_node_sys_cmd_list.hpp"
 #include "b_hub_cmd/b_hub_cmd_list.hpp"
-#include "../_common/node_list.hpp"
+
+struct st_require_node_info
+{
+    std::string node_type;
+    std::string node_jsonfile;
+    std::string node_folder;
+    st_require_node_info(/* args */)
+    {
+        node_type = "";
+        node_jsonfile = "";
+        node_folder = "";
+    }
+};
 
 class b_node : public node
 {
 private:
 protected:
-    behavior_node_list this_node;
-    std::vector<int> requirement_b_node_list;
-    std::vector<int> requirement_p_node_list;
+    int node_id_;
+    std::vector<st_require_node_info> requirement_node_list;
     /* B Hub Item */
     std::shared_ptr<node_cmd> b_hub_cmd_;
     /* Relative B Nodes Item */
@@ -21,19 +32,24 @@ protected:
     std::map<int, std::shared_ptr<node_state>> b_node_state_map;
     std::map<int, std::shared_ptr<node_cmd>> b_node_sys_cmd_map;
     std::map<int, std::shared_ptr<node_state>> user_b_node_state_map;
-    /* Relative P Node Item */
-    std::map<int, std::shared_ptr<node_state>> p_node_state_map;
-    std::map<int, std::shared_ptr<node_cmd>> p_node_cmd_map;
-    std::map<int, std::shared_ptr<node_cmd>> p_node_sys_cmd_map;
-    std::map<int, std::shared_ptr<node_state>> user_p_node_state_map;
+
+    std::map<int, std::string> rel_node_id2name_map;
+    std::map<std::string, std::string> rel_node_jsonfile2name_map;
+    std::map<std::string, int> rel_node_jsonfile2id_map;
+    std::map<std::string, int> rel_node_name2id_map;
 
     void _sys_cmd_executor();
-    void _start_node(behavior_node_list source_node);
+    void _start_node(int source_node_id);
     void set_shared_ptr(st_node_cmd cmd);
     void set_config(nlohmann::json json_data) override;
     virtual void _set_config(nlohmann::json json_data) = 0;
+    common_cmd_code get_invoice_to_hub();
     void send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data);
+<<<<<<< HEAD
     void send_sys_cmd_to_node(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data, behavior_node_list destination_node);
+=======
+    //void send_sys_cmd_to_node(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data, behavior_node_list destination_node);
+>>>>>>> separate_system_usernode
 
     /* node_state loop process */
     void initialize_processing() override;
@@ -87,7 +103,7 @@ public:
     {
         is_main_thread_running_ = false;
     }
-    void Start_Node(bool use_udp_communication, std::shared_ptr<node_cmd> hub_cmd);
+    void Start_Node(std::shared_ptr<node_cmd> hub_cmd);
     std::shared_ptr<st_node_state> get_state_ptr()
     {
         return node_state_;
@@ -101,13 +117,20 @@ public:
         return node_sys_cmd_;
     }
     // Behavior System
-    void set_relative_b_node_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> cmd);
-    void set_relative_b_node_state_ptr(behavior_node_list node_type, std::shared_ptr<st_node_state> state);
-    void set_relative_b_node_sys_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> sys_cmd);
-    void set_user_b_node_state_ptr(behavior_node_list node_type, std::shared_ptr<st_node_state> state);
-    // Physics System
-    void set_relative_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state);
-    void set_relative_p_node_cmd_ptr(physics_node_list node_type, std::shared_ptr<node_cmd> cmd);
-    void set_relative_p_node_sys_cmd_ptr(physics_node_list node_type, std::shared_ptr<node_cmd> sys_cmd);
-    void set_user_p_node_state_ptr(physics_node_list node_type, std::shared_ptr<node_state> state);
+    void set_relative_node_name_and_id(std::string json_file_name_of_requirement_node,
+                                         int node_id,
+                                         std::string node_name);
+    void set_relative_node_cmd_ptr(int node_id,
+                                   std::shared_ptr<node_cmd> cmd);
+    void set_relative_node_state_ptr(int node_id,
+                                     std::shared_ptr<node_state> state);
+    void set_relative_node_sys_cmd_ptr(int node_id,
+                                       std::shared_ptr<node_cmd> sys_cmd);
+    //void set_relative_b_node_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> cmd);
+    //void set_relative_b_node_state_ptr(behavior_node_list node_type, std::shared_ptr<st_node_state> state);
+    //void set_relative_b_node_sys_cmd_ptr(behavior_node_list node_type, std::shared_ptr<node_cmd> sys_cmd);
+    //void set_user_b_node_state_ptr(behavior_node_list node_type, std::shared_ptr<st_node_state> state);
+    void set_node_id(int node_id);
+    virtual std::shared_ptr<b_node> Clone() const = 0;
+    virtual ~b_node() = default;
 };

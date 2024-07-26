@@ -35,7 +35,7 @@ private:
 protected:
     /* data */
     bool is_main_thread_running_;
-    bool is_accepted_comm_udp_;
+    bool is_allowed_comm_udp_;
     bool is_occured_error_;
     bool is_occured_warning_;
 
@@ -54,8 +54,6 @@ protected:
     /* threads */
     std::string config_file_name_;
     std::string config_directory_name_;
-    void set_config_file_name(std::string config_file_name);
-    void set_config_directory_name(std::string config_directory);
     node_config node_config_;
     virtual void _task_main();
     virtual void _task_recv();
@@ -98,7 +96,7 @@ protected:
 public:
     node(/* args */);
     ~node();
-    void Start(bool use_udp_communication);
+    void Start();
     void End();
     void Reset();
     void PushForceStop();
@@ -106,4 +104,6 @@ public:
     void ChangeStable();
     void ChangeRepair();
     void ChangeReady();
+    void set_config_file_name(std::string config_file_name);
+    void set_config_directory_name(std::string config_directory);
 };
