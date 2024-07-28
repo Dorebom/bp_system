@@ -12,5 +12,5 @@ struct sys_cmd_set_shared_ptr
     int shared_ptr_type;
     std::shared_ptr<node_cmd> node_cmd_ptr;
     std::shared_ptr<node_cmd> node_sys_cmd_ptr;
-    std::shared_ptr<st_node_state> node_state_ptr; 
+    std::shared_ptr<st_node_state> node_state_ptr;
 };

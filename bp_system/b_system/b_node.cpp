@@ -29,7 +29,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::STABLE)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
+                        || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::STABLE)){}
                     else
                     {
@@ -54,7 +54,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
+                        || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -70,7 +70,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
+                        || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -266,7 +266,7 @@ void b_node::repair_processing()
     bool is_usable_state_machine = true;
     for (auto &&node_state : user_b_node_state_map)
     {
-        if (node_state.second->state_code.state_machine != node_state_machine::REPAIR or
+        if (node_state.second->state_code.state_machine != node_state_machine::REPAIR ||
             node_state.second->state_code.state_machine != node_state_machine::STABLE)
         {
             is_usable_state_machine = false;

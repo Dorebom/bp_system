@@ -13,6 +13,8 @@ find_package(Threads)
 # インクルードパスを追加
 #include_directories(_extra)
 include_directories(_extra/nlohmann)
+include_directories(_extra/boost)
+include_directories(_extra/msgpack-cpp)
 #include_directories(_extra/msgpack-c)
 include_directories(example_node)
 include_directories(bp_system)

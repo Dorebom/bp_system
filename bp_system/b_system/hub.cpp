@@ -4,7 +4,10 @@
 #include <fstream>
 #include <chrono>
 #include <type_traits>
-#include <unistd.h>
+
+#ifdef __linux__
+    #include <unistd.h>
+#endif
 
 hub::hub(/* args */)
 {

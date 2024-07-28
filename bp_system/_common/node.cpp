@@ -163,7 +163,7 @@ void node::node_processing()
     generate_signal_to_chenge_node_state();
 
     // 2.0 切り替え処理 か ループ処理を実行
-    if (signal_to_change_node_state and node_state_machine_ != node_state_machine::TRANSITING)
+    if (signal_to_change_node_state && node_state_machine_ != node_state_machine::TRANSITING)
     {   // 2.1. 切り替え処理を実行
         print_log("[change_processing]CHANGE NODE "
             + get_node_state_machine_name(node_state_machine_) + " -> "
@@ -233,7 +233,7 @@ void node::generate_signal_to_chenge_node_state()
                 cmd_node_state_machine_ = node_state_machine::READY;
                 signal_to_reset_node = false;
             }
-            else if (signal_to_change_stable and is_occured_warning_ == false)
+            else if (signal_to_change_stable && is_occured_warning_ == false)
             {
                 signal_to_change_node_state = true;
                 cmd_node_state_machine_ = node_state_machine::STABLE;
@@ -247,14 +247,14 @@ void node::generate_signal_to_chenge_node_state()
             }
             break;
         case node_state_machine::READY:
-            if (signal_to_change_stable and is_occured_warning_ == false
-                and is_occured_error_ == false)
+            if (signal_to_change_stable && is_occured_warning_ == false
+                && is_occured_error_ == false)
             {
                 signal_to_change_node_state = true;
                 cmd_node_state_machine_ = node_state_machine::STABLE;
                 signal_to_change_stable = false;
             }
-            else if (signal_to_change_repair and is_occured_error_ == false)
+            else if (signal_to_change_repair && is_occured_error_ == false)
             {
                 signal_to_change_node_state = true;
                 cmd_node_state_machine_ = node_state_machine::REPAIR;
@@ -325,7 +325,7 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
                 }
                 break;
             case node_state_machine::READY:
-                if (is_occured_error_ == false and is_occured_warning_ == false)
+                if (is_occured_error_ == false && is_occured_warning_ == false)
                 {
                     is_success = ready_to_stable_processing();
                 }
@@ -438,7 +438,7 @@ void node::_load_json_config(std::string config_file)
     nlohmann::json j;
     std::ifstream i(config_directory_name_ + config_file);
     if (!i) {
-        std::cerr << "ファイルオープンに失敗" << std::endl;
+        std::cerr << "[ERROR]Failed to open file: " << config_directory_name_ + config_file << std::endl;
         std::exit(1);
     }
     i >> j;
