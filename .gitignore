@@ -3,7 +3,6 @@
 /build
 /bp_system/p_system/*
 /_extra/boost/*
-/_extra/msgpack-cpp/*
 /plantuml/*
 /out/*
 *.plantuml
