@@ -45,11 +45,7 @@ protected:
     virtual void _set_config(nlohmann::json json_data) = 0;
     common_cmd_code get_invoice_to_hub();
     void send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data);
-<<<<<<< HEAD
-    void send_sys_cmd_to_node(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data, behavior_node_list destination_node);
-=======
     //void send_sys_cmd_to_node(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data, behavior_node_list destination_node);
->>>>>>> separate_system_usernode
 
     /* node_state loop process */
     void initialize_processing() override;

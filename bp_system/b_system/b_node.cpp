@@ -29,11 +29,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::STABLE)
-<<<<<<< HEAD
                         || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
-=======
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
->>>>>>> separate_system_usernode
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::STABLE)){}
                     else
                     {
@@ -58,11 +54,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-<<<<<<< HEAD
                         || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
-=======
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
->>>>>>> separate_system_usernode
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -78,11 +70,7 @@ void b_node::_sys_cmd_executor()
                 for (auto &&user_node_state : user_b_node_state_map)
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
-<<<<<<< HEAD
                         || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
-=======
-                        or (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING and
->>>>>>> separate_system_usernode
                             user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
                     else
                     {
@@ -125,11 +113,7 @@ void b_node::_sys_cmd_executor()
             break;
         case b_node_sys_cmd_list::REQUIRE_NODE_LIST:
             print_log("[sys_cmd_executor]REQUIRE_NODE_LIST");
-<<<<<<< HEAD
-            _start_node(this_node);
-=======
             _start_node(node_id_);
->>>>>>> separate_system_usernode
             break;
         default:
             print_log("[sys_cmd_executor]Invalid cmd_type");
@@ -168,16 +152,8 @@ void b_node::_start_node(int source_node_id)
         node_cmd.cmd_code.priority = 0;
         node_cmd.cmd_code.cmd_id = 0;
         node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::START_NODE;
-<<<<<<< HEAD
-        node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
-
-        st_cmd_start_node* cmd_data;
-        cmd_data = (st_cmd_start_node*)node_cmd.data;
-        cmd_data->node_type = requirement;
-=======
         node_cmd.cmd_code.data_size = size;
         node_cmd.cmd_code.is_used_msgpack = true;
->>>>>>> separate_system_usernode
 
         b_hub_cmd_->cmd_stack_.push(node_cmd);
 
@@ -186,21 +162,6 @@ void b_node::_start_node(int source_node_id)
     }
     if (requirement_node_cnt == 0)
     {
-<<<<<<< HEAD
-        print_log("[start_node]" + get_p_node_name((physics_node_list)requirement));
-        node_cmd.cmd_code.source = (int)source_node;
-        node_cmd.cmd_code.destination = (int)behavior_node_list::HUB;
-        node_cmd.cmd_code.priority = 0;
-        node_cmd.cmd_code.cmd_id = 0;
-        node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::START_P_NODE;
-        node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
-
-        st_cmd_start_node* cmd_data;
-        cmd_data = (st_cmd_start_node*)node_cmd.data;
-        cmd_data->node_type = requirement;
-
-        b_hub_cmd_->cmd_stack_.push(node_cmd);
-=======
         print_log("[start_node]No requirement node");
     }
     else
@@ -210,7 +171,6 @@ void b_node::_start_node(int source_node_id)
         {
             print_log("[start_node]All requirement node is sent");
         }
->>>>>>> separate_system_usernode
     }
 }
 
@@ -255,38 +215,6 @@ void b_node::set_config(nlohmann::json json_data)
 
 common_cmd_code b_node::get_invoice_to_hub()
 {
-<<<<<<< HEAD
-    st_node_cmd node_cmd;
-    node_cmd.cmd_code.source = (int)this_node;
-    node_cmd.cmd_code.destination = (int)behavior_node_list::HUB;
-    node_cmd.cmd_code.priority = 0;
-    node_cmd.cmd_code.cmd_id = 0;
-    node_cmd.cmd_code.cmd_type = (int)cmd_type;
-    switch (cmd_type)
-    {
-    case b_hub_cmd_list::START_NODE:
-        node_cmd.cmd_code.data_size = sizeof(st_cmd_start_node);
-        break;
-    case b_hub_cmd_list::END_NODE:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::PICK_SHARED_PTR:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::LOAD_NODE_LIST:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::START_P_NODE:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    case b_hub_cmd_list::DELETE_SHARED_PTR:
-        node_cmd.cmd_code.data_size = 0;
-        break;
-    default:
-        break;
-    }
-    b_hub_cmd_->cmd_stack_.push(node_cmd);
-=======
     common_cmd_code cmd_code;
     cmd_code.source = node_id_;
     cmd_code.destination = 0;
@@ -294,7 +222,6 @@ common_cmd_code b_node::get_invoice_to_hub()
     cmd_code.cmd_id = 0;
 
     return cmd_code;
->>>>>>> separate_system_usernode
 }
 
 /*

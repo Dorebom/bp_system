@@ -142,11 +142,7 @@ void node::_task_main()
     is_main_thread_running_ = true;
     _reset_internal_status();
     _configure();
-<<<<<<< HEAD
-    is_accepted_comm_udp_ = true;
-=======
     is_allowed_comm_udp_ = true;
->>>>>>> separate_system_usernode
 
     while (is_main_thread_running_)
     {
@@ -167,7 +163,7 @@ void node::node_processing()
     generate_signal_to_chenge_node_state();
 
     // 2.0 切り替え処理 か ループ処理を実行
-    if ((signal_to_change_node_state) && (node_state_machine_ != node_state_machine::TRANSITING))
+    if (signal_to_change_node_state && node_state_machine_ != node_state_machine::TRANSITING)
     {   // 2.1. 切り替え処理を実行
         print_log("[change_processing]CHANGE NODE "
             + get_node_state_machine_name(node_state_machine_) + " -> "
@@ -442,8 +438,7 @@ void node::_load_json_config(std::string config_file)
     nlohmann::json j;
     std::ifstream i(config_directory_name_ + config_file);
     if (!i) {
-        std::cerr << "ERROR: Cannot open file" << std::endl;
-        std::cerr << config_directory_name_ + config_file << std::endl;
+        std::cerr << "[ERROR]Failed to open file: " << config_directory_name_ + config_file << std::endl;
         std::exit(1);
     }
     i >> j;

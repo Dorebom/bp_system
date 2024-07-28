@@ -8,7 +8,7 @@
 
 void b_example_sub_servo::_update_servo_state(int add_value)
 {
-    if(node_state_machine_ == node_state_machine::STABLE || node_state_machine_ == node_state_machine::REPAIR)
+    if(node_state_machine_ == node_state_machine::STABLE or node_state_machine_ == node_state_machine::REPAIR)
     {
         state_->encoder_count += add_value;
     }
