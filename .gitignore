@@ -7,3 +7,8 @@
 /plantuml/*
 /out/*
 *.plantuml
+/user_node/*
+.vs/*
+main.cpp
+bp_system.exe
+bp_system.pdb

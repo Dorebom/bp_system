@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // Base node, cmd and state
 #include "b_system/b_node.hpp"
@@ -41,7 +41,7 @@ private:
     bool _stable_to_repair_processing_after() override;
 
     void _configure() override;
-    void _set_config(nlohmann::json json_data) override;
+    void _set_config(nlohmann::json &json_data) override;
     void _set_state() override;
     void cmd_executor();
 public:

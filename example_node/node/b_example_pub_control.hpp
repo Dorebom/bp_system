@@ -40,7 +40,7 @@ private:
     bool _stable_to_repair_processing_after() override;
 
     void _configure() override;
-    void _set_config(nlohmann::json json_data) override;
+    void _set_config(nlohmann::json &json_data) override;
     void _set_state() override;
 public:
     b_example_pub_control(/* args */);

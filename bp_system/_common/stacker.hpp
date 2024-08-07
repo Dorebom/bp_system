@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include <vector>
@@ -50,6 +50,12 @@ public:
     // スタックの最大要素数を取得
     size_t max_size() const {
         return size_;
+    }
+
+    // スタックをクリア
+    void clear() {
+        std::lock_guard<std::mutex> lock(mtx_);
+        head_ = tail_ = count_ = 0;
     }
 
 private:

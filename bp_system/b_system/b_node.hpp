@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../_common/node.hpp"
 /* Behavior System */
@@ -41,8 +41,8 @@ protected:
     void _sys_cmd_executor();
     void _start_node(int source_node_id);
     void set_shared_ptr(st_node_cmd cmd);
-    void set_config(nlohmann::json json_data) override;
-    virtual void _set_config(nlohmann::json json_data) = 0;
+    void set_config(nlohmann::json &json_data) override;
+    virtual void _set_config(nlohmann::json &json_data) = 0;
     common_cmd_code get_invoice_to_hub();
     void send_cmd_to_hub(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data);
     //void send_sys_cmd_to_node(b_hub_cmd_list cmd_type, std::uint8_t* cmd_data, behavior_node_list destination_node);

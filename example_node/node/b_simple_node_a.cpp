@@ -1,4 +1,4 @@
-#include "b_simple_node_a.hpp"
+﻿#include "b_simple_node_a.hpp"
 // Setting file name
 #define B_NODE_CONFIG_DIRECTORY "../example_node/config/"
 #define B_NODE_CONFIG_FILE "b_simple_node_a.json"
@@ -30,7 +30,6 @@ void b_simple_node_a::_repair_processing()
 {
     cmd_executor();
     node_state_->state_code.state_machine = node_state_machine_;
-
 }
 void b_simple_node_a::_stable_processing()
 {
@@ -66,7 +65,7 @@ bool b_simple_node_a::_ready_to_stable_processing_after(){return true;}
 bool b_simple_node_a::_repair_to_stable_processing_after(){return true;}
 bool b_simple_node_a::_stable_to_repair_processing_after(){return true;}
 
-void b_simple_node_a::_set_config(nlohmann::json json_data) 
+void b_simple_node_a::_set_config(nlohmann::json &json_data) 
 {
 }
 void b_simple_node_a::_configure()

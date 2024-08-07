@@ -1,16 +1,16 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 #include <map>
 
 #include "../_common/node.hpp"
 #include "../_common/node_util.hpp"
+#include "../_common/comm/comm_udp.hpp"
 
 #include "node_store.hpp"
 
+#include "b_hub_state.hpp"
 #include "b_hub_cmd/b_hub_cmd_list.hpp"
-
-
 
 #define BEHAVIOR_HUB_CONFIG_FILE "behavior_hub.json"
 
@@ -40,7 +40,7 @@ private:
     bool stable_to_repair_processing() override;
 
     void _configure() override;
-    void set_config(nlohmann::json json_data) override;
+    void set_config(nlohmann::json& json_data) override;
     void _set_state() override;
     void cmd_executor();
 
@@ -62,11 +62,21 @@ private:
 
     std::map<int, int> waiting_node_list;                   // key: node_id,   value: node_name
 
+    b_hub_state* state_;
+    void set_state_machine();
+
     /*Sub-Function*/
     void pick_shared_ptr(int node_id);
     void delete_shared_ptr(int node_id);
     void exec_node(std::string node_type_name, std::string setting_json_file_name, std::string setting_json_folder_name, int waiting_node_id);
     void send_your_requirement_node_list(int node_id);
+
+    /* GUI COMMUNICATION */
+    bool is_gui_connected;
+    CommUdp comm_gui_;
+    std::shared_ptr<node_state_stack> b_system_state;
+    void _task_recv() override;
+    void _task_send() override;
 
 public:
     hub(/* args */);
@@ -76,4 +86,9 @@ public:
     void show_stored_node();
     void exec_node(std::string node_type_name, std::string setting_json_file_name, std::string setting_json_folder_name);
     void exit_node(int node_id);
+    void exit_node(std::string setting_json_file_name);
+    void show_node_json_file(std::string node_type_name, std::string setting_json_file_name, std::string setting_json_folder_name);
+    void display_state();
+    bool check_hub_running();
+
 };

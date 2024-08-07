@@ -18,6 +18,7 @@ include_directories(_extra/msgpack-cpp)
 #include_directories(_extra/msgpack-c)
 include_directories(example_node)
 include_directories(bp_system)
+include_directories(user_node)
 
 add_executable(${CMAKE_PROJECT_NAME}
     main.cpp
@@ -29,10 +30,15 @@ add_executable(${CMAKE_PROJECT_NAME}
     #bp_system/p_system/p_hub.cpp
     # b node
     bp_system/b_system/b_node.cpp
-    example_node/node/b_simple_node_a.cpp
-    example_node/node/b_simple_node_b.cpp
+    #example_node/node/b_simple_node_a.cpp
+    #example_node/node/b_simple_node_b.cpp
+    #
+    #example_node/node/dummy_servo_node.cpp
     #example_node/node/b_example_sub_servo.cpp
     #example_node/node/b_example_pub_control.cpp
+    user_node/node/basic_sub_servo.cpp
+    user_node/node/basic_pub_control.cpp
+    user_node/node/basic_gui_comm.cpp
 )
 
 if(WIN32)

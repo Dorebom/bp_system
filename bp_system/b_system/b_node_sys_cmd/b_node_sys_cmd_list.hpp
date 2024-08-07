@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "sys_cmd_set_shared_ptr.hpp"
 

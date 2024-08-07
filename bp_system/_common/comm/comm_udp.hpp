@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -21,6 +21,8 @@
 
 #define UDP_SEND_IP "127.0.0.1"
 #define UDP_RECV_IP "127.0.0.1"
+
+#define MAX_UDP_DATA_SIZE 1400
 
 class CommUdp
 {

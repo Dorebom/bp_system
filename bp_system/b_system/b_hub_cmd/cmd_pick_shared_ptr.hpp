@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 struct cmd_pick_shared_ptr
 {

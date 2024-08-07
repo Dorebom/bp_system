@@ -1,7 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "node_state_machine.hpp"
 #include "stacker.hpp"
+
+#define MAX_NODE_CMD_DATA_SIZE 200
 
 struct common_cmd_code
 {
@@ -31,7 +33,7 @@ struct st_node_cmd
 {
     /* data */
     common_cmd_code cmd_code;
-    std::uint8_t data[1024];
+    std::uint8_t data[MAX_NODE_CMD_DATA_SIZE];
     st_node_cmd(/* args */)
     {
         cmd_code = common_cmd_code();

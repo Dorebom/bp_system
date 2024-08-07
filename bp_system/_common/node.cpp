@@ -1,4 +1,4 @@
-#include "node.hpp"
+﻿#include "node.hpp"
 
 #include <iostream>
 #include <chrono>
@@ -8,7 +8,7 @@
 
 node::node(/* args */)
 {
-    is_main_thread_running_ = false;
+    change_node_running(false);
     set_config_directory_name(CONFIG_FOLDER);
 }
 
@@ -19,15 +19,16 @@ node::~node()
 /* ↓-- PUBLIC OPERATION --↓ */
 void node::Start()
 {
-    if (is_main_thread_running_ == false)
+    if (check_node_running() == false)
     {
         _preconfigure(config_file_name_);
         std::thread t_main(&node::_task_main, this);
         t_main.detach();
-        while (is_main_thread_running_ == false)
+        while (check_node_running() == false)
         {
             print_log("Main Thread Executing...");
-            std::this_thread::sleep_for(std::chrono::microseconds(100000));
+            // sleep 100ms
+            std::this_thread::sleep_for(std::chrono::microseconds(10000));
         }
         if (use_udp_communication_){
             std::thread t_recv(&node::_task_recv, this);
@@ -46,7 +47,7 @@ void node::Start()
 void node::End()
 {
     end_processing();
-    is_main_thread_running_ = false;
+    change_node_running(false);
 }
 
 void node::Reset()
@@ -90,9 +91,9 @@ void node::_task_send()
 
     comm_udp_.set_send_address(node_config_.send_ip.c_str(), node_config_.send_port);
 
-    while (is_main_thread_running_)
+    while (check_node_running() == true)
     {
-        if (is_allowed_comm_udp_)
+        if (check_allowed_comm_udp())
         {
             comm_udp_.send_data(reinterpret_cast<uint8_t*>(&send_data_), sizeof(st_node_cmd));
         }
@@ -111,9 +112,9 @@ void node::_task_recv()
 
     st_node_cmd recv_data_;
     int recv_data_size = 0;
-    while (is_main_thread_running_)
+    while (check_node_running() == true)
     {
-        if (is_allowed_comm_udp_)
+        if (check_allowed_comm_udp())
         {
             recv_data_size = comm_udp_.recv_data(reinterpret_cast<uint8_t*>(&recv_data_), sizeof(st_node_cmd));
             if (recv_data_size > 0)
@@ -139,18 +140,19 @@ void node::_task_main()
     print_log("Sleep time: " + std::to_string((int)(node_config_.task_main_periodic_time * 0.001)) + "ms");
     node_cycle_time_ = node_config_.task_main_periodic_time * 0.000001;
 
-    is_main_thread_running_ = true;
+    change_node_running(true);
     _reset_internal_status();
     _configure();
-    is_allowed_comm_udp_ = true;
+    change_allowed_comm_udp(true);
 
-    while (is_main_thread_running_)
+    while (check_node_running() == true)
     {
         node_processing();
         std::this_thread::sleep_for(std::chrono::microseconds(node_config_.task_main_periodic_time));
     }
     print_log("Main Thread End");
     node_state_machine_ = node_state_machine::UNCONFIGURED;
+    //std::this_thread::sleep_for(std::chrono::microseconds(2000));
 }
 
 /* ↑-- THREAD --↑ */
@@ -369,6 +371,8 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
         if (is_success)
         {
             node_state_machine_ = cmd_node_state_machine_;
+            // DONE
+            print_log("[change_processing]DONE");
         }
         else if (use_transit_timer)
         {
@@ -376,10 +380,34 @@ bool node::change_node_state(node_state_machine cmd_state_machine, bool use_tran
             //std::chrono::system_clock::now().time_since_epoch().count();
             prev_node_state_machine_ = node_state_machine_;
             transit_destination_node_state_machine_ = cmd_node_state_machine_;
+            node_state_->state_code.transit_destination_node_state_machine = transit_destination_node_state_machine_;
             node_state_machine_ = node_state_machine::TRANSITING;
         }
     }
     return is_success;
+}
+
+void node::change_node_running(bool is_running)
+{
+    //std::lock_guard<std::mutex> lock(mtx_);
+    is_main_thread_running_ = is_running;
+}
+
+void node::change_allowed_comm_udp(bool is_allowed)
+{
+    //std::lock_guard<std::mutex> lock(mtx_);
+	is_allowed_comm_udp_ = is_allowed;
+}
+
+bool node::check_allowed_comm_udp()
+{
+    return is_allowed_comm_udp_;
+}
+
+bool node::check_node_running()
+{
+    //std::lock_guard<std::mutex> lock(mtx_);
+	return is_main_thread_running_;
 }
 
 void node::node_loop_processing()
@@ -414,6 +442,8 @@ void node::node_loop_processing()
         // Add error message
         break;
     }
+    node_state_->state_code.state_machine = node_state_machine_;
+    node_state_->state_code.transit_destination_node_state_machine = transit_destination_node_state_machine_;
 }
 
 /* ↑-- END FRAMEWORK --↑ */
@@ -445,6 +475,10 @@ void node::_load_json_config(std::string config_file)
 
     node_config_.node_name = j["node_name"];
     node_config_.node_type = j["node_type"];
+
+    print_log("Node Name: " + node_config_.node_name);
+    print_log("Node Type: " + node_config_.node_type);
+
     // Threads
     node_config_.task_main_periodic_time = j["task_main_periodic_time"];
     // Communication

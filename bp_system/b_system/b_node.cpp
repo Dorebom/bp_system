@@ -1,4 +1,4 @@
-#include "b_node.hpp"
+﻿#include "b_node.hpp"
 
 void b_node::Start_Node(std::shared_ptr<node_cmd> hub_cmd)
 {
@@ -30,7 +30,7 @@ void b_node::_sys_cmd_executor()
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::STABLE)
                         || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
-                            user_node_state.second->state_code.transit_destination_node_state == node_state_machine::STABLE)){}
+                            user_node_state.second->state_code.transit_destination_node_state_machine == node_state_machine::STABLE)){}
                     else
                     {
                         user_state_machine_cnt++;
@@ -55,7 +55,7 @@ void b_node::_sys_cmd_executor()
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
                         || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
-                            user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
+                            user_node_state.second->state_code.transit_destination_node_state_machine == node_state_machine::READY)){}
                     else
                     {
                         user_state_machine_cnt++;
@@ -71,7 +71,7 @@ void b_node::_sys_cmd_executor()
                 {
                     if ((user_node_state.second->state_code.state_machine == node_state_machine::READY)
                         || (user_node_state.second->state_code.state_machine == node_state_machine::TRANSITING &&
-                            user_node_state.second->state_code.transit_destination_node_state == node_state_machine::READY)){}
+                            user_node_state.second->state_code.transit_destination_node_state_machine == node_state_machine::READY)){}
                     else
                     {
                         user_state_machine_cnt++;
@@ -152,7 +152,7 @@ void b_node::_start_node(int source_node_id)
         node_cmd.cmd_code.priority = 0;
         node_cmd.cmd_code.cmd_id = 0;
         node_cmd.cmd_code.cmd_type = (int)b_hub_cmd_list::START_NODE;
-        node_cmd.cmd_code.data_size = size;
+        node_cmd.cmd_code.data_size = (int)size;
         node_cmd.cmd_code.is_used_msgpack = true;
 
         b_hub_cmd_->cmd_stack_.push(node_cmd);
@@ -194,7 +194,7 @@ void b_node::set_shared_ptr(st_node_cmd cmd)
     }
 }
 
-void b_node::set_config(nlohmann::json json_data)
+void b_node::set_config(nlohmann::json &json_data)
 {
     print_log("set config");
     node_config_.cmd_stack_size = json_data.at("cmd_stack_size");
@@ -243,7 +243,6 @@ void b_node::send_sys_cmd_to_node(
 
 void b_node::initialize_processing()
 {
-    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _initialize_processing();
 }
@@ -256,7 +255,6 @@ void b_node::ready_processing()
         {
         }
     }
-    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _ready_processing();
 }
@@ -276,7 +274,6 @@ void b_node::repair_processing()
     {
         ChangeReady();
     }
-    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _repair_processing();
 }
@@ -295,14 +292,12 @@ void b_node::stable_processing()
     {
         ChangeReady();
     }
-    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _stable_processing();
 }
 
 void b_node::force_stop_processing()
 {
-    node_state_->state_code.state_machine = node_state_machine_;
     _sys_cmd_executor();
     _force_stop_processing();
 }
@@ -390,6 +385,7 @@ void b_node::transit_processing()
         {
             _change_node_state(prev_node_state_machine_, transit_destination_node_state_machine_);
             node_state_machine_ = transit_destination_node_state_machine_;
+            node_state_->state_code.state_machine = node_state_machine_;
             print_log("[transit_processing]Done: "
                     + get_node_state_machine_name(node_state_machine_)
                     + " -> " + get_node_state_machine_name(transit_destination_node_state_machine_));

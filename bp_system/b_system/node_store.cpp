@@ -1,4 +1,4 @@
-#include "node_store.hpp"
+﻿#include "node_store.hpp"
 
 void NodeStore::set_node(b_node& stored_node, std::string node_name)
 {

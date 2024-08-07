@@ -1,4 +1,7 @@
-#pragma once
+﻿#pragma once
+
+//#include "nlohmann/json.hpp"
+#include <mutex>
 
 #include "json.hpp"
 
@@ -15,6 +18,8 @@
 class node
 {
 private:
+    //std::mutex mtx_;
+
     /* data */
     bool signal_to_release_force_stop;
     bool signal_to_execute_force_stop;
@@ -35,7 +40,11 @@ private:
 protected:
     /* data */
     bool is_main_thread_running_;
+    void change_node_running(bool is_running);
+    // bool check_node_running(); -> public
     bool is_allowed_comm_udp_;
+    void change_allowed_comm_udp(bool is_allowed);
+    bool check_allowed_comm_udp();
     bool is_occured_error_;
     bool is_occured_warning_;
 
@@ -90,7 +99,7 @@ protected:
     void _preconfigure(std::string config_file);
     virtual void _configure() = 0;                          // 後で(継承先で)設定処理を記述する
     void _load_json_config(std::string config_file);
-    virtual void set_config(nlohmann::json json_data) = 0; // 後で(継承先で)jsonファイルを読み込む処理を記述する
+    virtual void set_config(nlohmann::json &json_data) = 0; // 後で(継承先で)jsonファイルを読み込む処理を記述する
     virtual void _set_state() = 0;                          // 後で(継承先で)stateを設定する処理を記述する
     void _reset_internal_status();
 public:
@@ -106,4 +115,6 @@ public:
     void ChangeReady();
     void set_config_file_name(std::string config_file_name);
     void set_config_directory_name(std::string config_directory);
+    bool check_node_running();
+
 };

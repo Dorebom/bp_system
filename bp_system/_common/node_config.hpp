@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
@@ -14,6 +14,7 @@ struct node_config
     double transit_watch_dog_time;
     int cmd_stack_size;
     int sys_cmd_stack_size;
+    int sys_state_stack_size;
     bool use_print_log;
 
     std::string recv_ip;
@@ -30,6 +31,8 @@ struct node_config
         task_main_periodic_time = 100000;
         transit_watch_dog_time = 0.0;
         cmd_stack_size = 1;
+        sys_cmd_stack_size = 1;
+        sys_state_stack_size = 1;
         recv_ip = "127.0.0.1";
         send_ip = "127.0.0.1";
         recv_port = 50000;

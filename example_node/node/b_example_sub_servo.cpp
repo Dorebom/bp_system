@@ -75,10 +75,12 @@ void b_example_sub_servo::_configure()
     node_cmd_ = std::make_shared<node_cmd>(node_config_.cmd_stack_size);
     node_sys_cmd_ = std::make_shared<node_cmd>(node_config_.sys_cmd_stack_size);
     state_ = (state_example_servo*)node_state_->data;
+    node_state_->state_code.node_id = node_id_;
+
 
 }
 
-void b_example_sub_servo::_set_config(nlohmann::json json_data)
+void b_example_sub_servo::_set_config(nlohmann::json &json_data)
 {
     node_config_.cmd_stack_size = json_data.at("cmd_stack_size");
     node_config_.sys_cmd_stack_size = json_data.at("sys_cmd_stack_size");

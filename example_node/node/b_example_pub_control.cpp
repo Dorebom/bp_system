@@ -122,7 +122,7 @@ void b_example_pub_control::_end_processing()
 {
 }
 
-void b_example_pub_control::_set_config(nlohmann::json json_data)
+void b_example_pub_control::_set_config(nlohmann::json &json_data)
 {
 }
 

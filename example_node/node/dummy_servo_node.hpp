@@ -6,8 +6,11 @@
 #include "_common/node_state.hpp"
 // List
 #include "b_system/b_hub_cmd/b_hub_cmd_list.hpp"
+// Data struct
+#include "../data_struct/state/state_dummy_servo.hpp"
+#include "../data_struct/cmd/cmd_dummy_servo.hpp"
 
-class b_simple_node_b : public b_node
+class dummy_servo_node : public b_node
 {
 private:
     /* data */
@@ -18,6 +21,7 @@ private:
     void _stable_processing() override;
     void _force_stop_processing() override;
     void _end_processing() override;
+    //void transit_processing() override;
     /* node state change process */
     // -> initialize
     bool _any_to_initialize_processing() override;
@@ -43,10 +47,17 @@ private:
     void _set_config(nlohmann::json &json_data) override;
     void _set_state() override;
     void cmd_executor();
+
+    /* data */
+    state_dummy_servo* state_;
+
+    void _update_servo_state();
+    //void _reset_encoder_count();
+
 public:
-    b_simple_node_b(/* args */);
-    ~b_simple_node_b();
+    dummy_servo_node(/* args */);
+    ~dummy_servo_node();
     std::shared_ptr<b_node> Clone() const override{
-        return std::make_shared<b_simple_node_b>(*this);
+        return std::make_shared<dummy_servo_node>(*this);
     }
-};  // class simple_node_b
+};  // class simple_node_a
