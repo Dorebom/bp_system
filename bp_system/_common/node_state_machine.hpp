@@ -2,13 +2,13 @@
 
 #include <string>
 
-enum class node_state_machine
+enum class node_state_machine : int
 {
-    UNCONFIGURED,
-    INITIALIZING,
-    READY,
-    STABLE,
-    REPAIR,
-    FORCE_STOP,
-    TRANSITING
+    UNCONFIGURED = 0,
+    INITIALIZING = 1,
+    READY = 2,
+    STABLE = 3,
+    REPAIR = 4,
+    FORCE_STOP = 5,
+    TRANSITING = 6
 };

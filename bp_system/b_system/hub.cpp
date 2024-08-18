@@ -266,6 +266,8 @@ void hub::cmd_executor()
             case b_hub_cmd_list::START_GUI:
                 print_log("[cmd]START_GUI");
                 is_gui_connected = true;
+                b_system_state->state_stack_.clear();
+                b_system_state->state_stack_.push(*node_state_);
                 break;
             case b_hub_cmd_list::END_GUI:
                 print_log("[cmd]END_GUI");
