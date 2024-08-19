@@ -18,28 +18,78 @@ void hub::_task_send()
 
     comm_gui_.set_send_address(node_config_.send_ip.c_str(), node_config_.send_port);
 
-    // 一度に送信可能な st_node_state数
-    int max_send_data_cnt = (MAX_UDP_DATA_SIZE - MAX_UDP_DATA_SIZE % sizeof(st_node_state)) / sizeof(st_node_state);
-    int send_data_cnt = 0;
-    st_node_state send_data_;
-    std::vector<st_node_state> send_data_list;
-    send_data_list.reserve(max_send_data_cnt);
+    static st_node_state temp_send_state_;    // 送信データの一時保存用
+    int fixed_header_data_size = sizeof(temp_send_state_.state_code);    // 固定ヘッダーのデータサイズ
+
+    int send_header_data_size = sizeof(send_state_.fixed_header_data_size) 
+                                + sizeof(send_state_.stack_marker_num) 
+                                + sizeof(send_state_.stack_marker);
+    static int stack_data_cnt = 0;
+    bool is_packet_saved = false;    // 1回分データを保存しているフラグが必要
 
     while (check_node_running())
     {
         if (check_allowed_comm_udp() && is_gui_connected)
         {
-            if (b_system_state->state_stack_.size() > 0)
+            send_state_.stack_marker_num = 0;
+            memset(send_state_.stack_marker, 0, MAX_STACK_MARKER_NUM);    // send_state_のstack_markerのデータ初期化
+            static int current_send_data_cnt = 0;  // 現在スタックしてるデータ区画をカウント
+
+            if (b_system_state->state_stack_.size() > 0 || is_packet_saved)
             {
-                send_data_cnt = 0;
-                while (send_data_cnt < max_send_data_cnt && b_system_state->state_stack_.size() > 0)
+                // 前回送信パケットに収まらず、保存していたデータがある場合
+                if (is_packet_saved)
                 {
-                    send_data_list.push_back(b_system_state->state_stack_.pop());
-                    //send_data_ = b_system_state->state_stack_.pop();
-                    send_data_cnt++;
+                    // 保存していたデータを送信データにコピー
+                    memcpy_s(&send_state_.data[0],
+                        ONE_STACK_SIZE * (MAX_STACK_MARKER_NUM),
+                        &temp_send_state_,
+                        temp_send_state_.state_code.data_size + fixed_header_data_size);
+                    is_packet_saved = false;
+
+                    current_send_data_cnt = stack_data_cnt;
                 }
-                comm_gui_.send_data(reinterpret_cast<uint8_t*>(&send_data_list), sizeof(st_node_state) * send_data_cnt);
-                send_data_list.clear();
+
+                while (current_send_data_cnt < MAX_STACK_MARKER_NUM && b_system_state->state_stack_.size() > 0)
+				{
+                    // 送信データを一時保存
+                    temp_send_state_ = b_system_state->state_stack_.pop();
+
+                    static int stack_data_size = temp_send_state_.state_code.data_size + fixed_header_data_size;
+
+                    static int stack_data_surplus = stack_data_size % ONE_STACK_SIZE;
+                    if (stack_data_surplus == 0)
+					{
+						stack_data_cnt = stack_data_size / ONE_STACK_SIZE;
+					}
+                    else
+                    {
+						stack_data_cnt = (stack_data_size - stack_data_surplus) / ONE_STACK_SIZE + 1;
+                    }
+
+                    if (current_send_data_cnt + stack_data_cnt > MAX_STACK_MARKER_NUM)
+                    {
+                        // 送信データがMAX_STACK_MARKER_NUMを超える場合
+                        // 次回にデータを送信するためにスタックしているデータを保存
+                        is_packet_saved = true;
+                        break;
+                    }
+					else
+					{
+						send_state_.stack_marker[send_state_.stack_marker_num] = stack_data_cnt;
+						send_state_.stack_marker_num++;
+
+                        // 送信データをコピー
+                        memcpy_s(&send_state_.data[current_send_data_cnt * ONE_STACK_SIZE],
+                                 ONE_STACK_SIZE * (MAX_STACK_MARKER_NUM - current_send_data_cnt),
+                                 &temp_send_state_, 
+                                 stack_data_size);
+
+                        current_send_data_cnt += stack_data_cnt;
+                    }
+				}
+                comm_gui_.send_data(reinterpret_cast<uint8_t*>(&send_state_), 
+                                    send_header_data_size + current_send_data_cnt * ONE_STACK_SIZE);
             }
         }
         std::this_thread::sleep_for(std::chrono::microseconds(node_config_.task_send_periodic_time));

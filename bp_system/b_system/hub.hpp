@@ -12,6 +12,8 @@
 #include "b_hub_state.hpp"
 #include "b_hub_cmd/b_hub_cmd_list.hpp"
 
+#include "b_hub_gui/send_state.hpp"
+
 #define BEHAVIOR_HUB_CONFIG_FILE "behavior_hub.json"
 
 class hub : public node
@@ -75,6 +77,7 @@ private:
     bool is_gui_connected;
     CommUdp comm_gui_;
     std::shared_ptr<node_state_stack> b_system_state;
+    b_hub_send_state send_state_;
     void _task_recv() override;
     void _task_send() override;
 

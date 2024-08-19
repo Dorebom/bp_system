@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../_common/node_state.hpp"
-#include <vector>
+//#include <vector>
 
 #define MAX_NODE_NUM 6
 #define MAX_NODE_NAME 20
