@@ -81,6 +81,11 @@ private:
     void _task_recv() override;
     void _task_send() override;
 
+    // ストリームデータ用にnodeIdを登録する
+    std::vector<int> stream_node_id_list;
+    void set_stream_data(int node_id);
+    void stream_data();
+
 public:
     hub(/* args */);
     hub(std::string setting_json_file_name, std::string setting_json_folder_name);

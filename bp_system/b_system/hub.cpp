@@ -100,6 +100,44 @@ void hub::_task_send()
     print_log("Send Thread End");
 }
 
+void hub::set_stream_data(int node_id)
+{
+    if (std::find(stream_node_id_list.begin(), stream_node_id_list.end(), node_id) == stream_node_id_list.end())
+	{
+        //if (stream_node_id_list.size() == stream_node_id_list.capacity())
+        //{
+        //    stream_node_id_list.resize(stream_node_id_list.capacity() + 5);
+        //}
+		stream_node_id_list.push_back(node_id);
+	}
+}
+
+void hub::stream_data()
+{
+    if (is_gui_connected && stream_node_id_list.size() > 0)
+	{
+		for (auto &&node_id : stream_node_id_list)
+		{
+			if (running_node_list.find(node_id) != running_node_list.end())
+			{
+				if (running_node_list[node_id]->check_node_running())
+				{
+					//running_node_list[node_id]->stream_data();
+                    b_system_state->state_stack_.push(*node_state_list[node_id]);
+				}
+				else
+				{
+					stream_node_id_list.erase(std::remove(stream_node_id_list.begin(), stream_node_id_list.end(), node_id), stream_node_id_list.end());
+				}
+			}
+			else
+			{
+				stream_node_id_list.erase(std::remove(stream_node_id_list.begin(), stream_node_id_list.end(), node_id), stream_node_id_list.end());
+			}
+		}
+	}
+}
+
 void hub::_task_recv()
 {
     //RecvData recv_data_;
@@ -169,26 +207,31 @@ void hub::initialize_processing()
     print_log("initialize_processing");
     cmd_executor();
     set_state_machine();
+    stream_data();
 }
 void hub::ready_processing()
 {
     cmd_executor();
     set_state_machine();
+    stream_data();
 }
 void hub::repair_processing()
 {
     cmd_executor();
     set_state_machine();
+    stream_data();
 }
 void hub::stable_processing()
 {
     cmd_executor();
     set_state_machine();
+    stream_data();
 }
 void hub::force_stop_processing()
 {
     cmd_executor();
     set_state_machine();
+    stream_data();
 }
 void hub::transit_processing()
 {
@@ -334,6 +377,10 @@ void hub::cmd_executor()
             case b_hub_cmd_list::SEND_NODES_INFO:
                 print_log("[cmd]SEND_NODES_INFO");
                 break;
+            case b_hub_cmd_list::STREAM_NODE_DATA:
+        		print_log("[cmd]STREAM_NODE_DATA");
+                set_stream_data(cmd.data[0]);
+				break;
             default:
                 break;
         }

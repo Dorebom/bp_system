@@ -5,7 +5,7 @@
 
 #define MAX_NODE_CMD_DATA_SIZE 200
 
-struct common_cmd_code
+struct common_cmd_code  // 32 bytes
 {
     /* data */
     int source;
@@ -16,6 +16,9 @@ struct common_cmd_code
     int data_size;
     bool is_sys_cmd;
     bool is_used_msgpack;
+    uint16_t dummy1;
+    uint32_t dummy2;
+
     common_cmd_code(/* args */)
     {
         source = 0;
@@ -26,6 +29,8 @@ struct common_cmd_code
         data_size = 0;
         is_sys_cmd = false;
         is_used_msgpack = false;
+        dummy1 = 0;
+        dummy2 = 0;
     }
 };
 
