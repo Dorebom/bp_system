@@ -21,9 +21,7 @@ void hub::_task_send()
     static st_node_state temp_send_state_;    // 送信データの一時保存用
     int fixed_header_data_size = sizeof(temp_send_state_.state_code);    // 固定ヘッダーのデータサイズ
 
-    int send_header_data_size = sizeof(send_state_.fixed_header_data_size) 
-                                + sizeof(send_state_.stack_marker_num) 
-                                + sizeof(send_state_.stack_marker);
+    send_state_.fixed_header_data_size = fixed_header_data_size;
     static int stack_data_cnt = 0;
     bool is_packet_saved = false;    // 1回分データを保存しているフラグが必要
 
@@ -33,7 +31,7 @@ void hub::_task_send()
         {
             send_state_.stack_marker_num = 0;
             memset(send_state_.stack_marker, 0, MAX_STACK_MARKER_NUM);    // send_state_のstack_markerのデータ初期化
-            static int current_send_data_cnt = 0;  // 現在スタックしてるデータ区画をカウント
+            int current_send_data_cnt = 0;  // 現在スタックしてるデータ区画をカウント
 
             if (b_system_state->state_stack_.size() > 0 || is_packet_saved)
             {
@@ -88,8 +86,13 @@ void hub::_task_send()
                         current_send_data_cnt += stack_data_cnt;
                     }
 				}
-                comm_gui_.send_data(reinterpret_cast<uint8_t*>(&send_state_), 
-                                    send_header_data_size + current_send_data_cnt * ONE_STACK_SIZE);
+                if (send_state_.stack_marker_num > 0)
+                {
+                    // 送信データを送信
+                    //print_log("Send Data: " + std::to_string(send_state_.send_state_header_size + current_send_data_cnt * ONE_STACK_SIZE) + " bytes"
+                    comm_gui_.send_data(reinterpret_cast<uint8_t*>(&send_state_),
+                        send_state_.send_state_header_size + current_send_data_cnt * ONE_STACK_SIZE);
+                }
             }
         }
         std::this_thread::sleep_for(std::chrono::microseconds(node_config_.task_send_periodic_time));
@@ -259,7 +262,7 @@ void hub::set_config(nlohmann::json &json_data) {
 void hub::_set_state()
 {
     //print_log("_set_state");
-    state_->state_machine = node_state_machine_;
+    //state_->state_machine = node_state_machine_;
 }
 
 void hub::cmd_executor()
@@ -352,6 +355,8 @@ void hub::_configure()
     node_state_->state_code.node_id = BEHAVIOR_HUB_ID;
     node_state_->state_code.data_size = sizeof(b_hub_state);
 
+    state_->initialize();
+    /*
     for (size_t i = 0; i < MAX_NODE_NUM; i++)
     {
         state_->running_node_id[i] = NO_NODE_ID;
@@ -360,6 +365,7 @@ void hub::_configure()
             state_->running_node_name[i][j] = '\0';
         }
     }
+    */
     // Exec node in requirement list
     for (auto &&requirement : requirement_node_list)
     {
@@ -446,6 +452,7 @@ void hub::exec_node(std::string node_type_name, std::string setting_json_file_na
             {
                 state_->running_node_name[i][j] = j_node_name[j];
             }
+            state_->running_node_num++;
             break;
         }
     }
@@ -517,6 +524,7 @@ void hub::exec_node(std::string node_type_name, std::string setting_json_file_na
             {
                 state_->running_node_name[i][j] = j_node_name[j];
             }
+            state_->running_node_num++;
             break;
         }
     }
@@ -546,6 +554,7 @@ void hub::exit_node(int node_id)
             {
                 state_->running_node_name[i][j] = '\0';
             }
+            state_->running_node_num--;
             break;
         }
     }
@@ -554,7 +563,7 @@ void hub::exit_node(int node_id)
 void hub::exit_node(std::string setting_json_file_name)
 {
     int node_id = running_node_name2id_list[setting_json_file_name];
-    exit_node(node_id);    
+    exit_node(node_id);
 }
 
 void hub::show_node_json_file(std::string node_type_name, std::string setting_json_file_name, std::string setting_json_folder_name)
@@ -605,8 +614,8 @@ void hub::display_state()
 
 void hub::set_state_machine()
 {
-    //node_state_->state_code.state_machine = node_state_machine_;
-    state_->state_machine = node_state_machine_;
+    // node_state_->state_code.state_machine = node_state_machine_;
+    // state_->state_machine = node_state_machine_;
 }
 
 void hub::pick_shared_ptr(int node_id)
