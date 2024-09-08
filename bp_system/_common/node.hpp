@@ -55,6 +55,7 @@ protected:
     std::shared_ptr<node_cmd> node_cmd_;
     std::shared_ptr<node_cmd> node_sys_cmd_;
     st_node_cmd send_data_;
+    bool is_send_data_exist_; // 新規に送信データは存在するか？
 
     uint64_t transit_start_time_;
     node_state_machine node_state_machine_, prev_node_state_machine_;

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "node_state_machine.hpp"
+#include "stacker.hpp"
 
 #define MAX_NODE_STATE_DATA_SIZE 200
 

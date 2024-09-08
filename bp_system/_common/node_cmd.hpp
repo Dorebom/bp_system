@@ -5,6 +5,22 @@
 
 #define MAX_NODE_CMD_DATA_SIZE 200
 
+// 説明
+/*--- 
+ *   
+ *- common_cmd_code
+ *  - source: 送信元
+ * 	- destination: 送信先
+ * 	- priority: 優先度
+ * 	- cmd_id: コマンドID
+ * 	- cmd_type: コマンドタイプ
+ * 	- data_size: データサイズ
+ * 	- is_sys_cmd: システムコマンドかどうか
+ * 	- is_used_msgpack: msgpackを使用するかどうか
+ * 	- dummy1: ダミー1
+ * 	- dummy2: ダミー2
+---*/
+
 struct common_cmd_code  // 32 bytes
 {
     /* data */

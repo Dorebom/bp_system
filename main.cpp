@@ -9,6 +9,8 @@
 #include "user_node/node/basic_sub_servo.hpp"
 #include "user_node/node/basic_pub_control.hpp"
 #include "user_node/node/basic_gui_comm.hpp"
+//
+#include "user_node/node/basic_m5stack.hpp"
 
 int main()
 {
@@ -30,10 +32,14 @@ int main()
 
     BasicGuiComm gui_comm_node;
 
+    BasicM5stack m5stack_node;
+
     hub_.store_node(servo_node, "basic_sub_servo");
     hub_.store_node(pub_node, "basic_pub_control");
 
     hub_.store_node(gui_comm_node, "basic_gui_comm");
+
+    hub_.store_node(m5stack_node, "basic_m5stack");
 
     hub_.show_stored_node();
     // <<- END Store Nodes
@@ -44,6 +50,8 @@ int main()
 
     hub_.exec_node("basic_sub_servo", "sub_servo.json", "../../../user_node/config/");
     //hub_.exec_node("basic_pub_control", "pub_control.json", "../../../user_node/config/");
+
+    hub_.exec_node("basic_m5stack", "basic_m5stack.json", "../../../user_node/config/");
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 

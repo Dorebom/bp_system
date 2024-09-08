@@ -39,7 +39,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     user_node/node/basic_sub_servo.cpp
     user_node/node/basic_pub_control.cpp
     user_node/node/basic_gui_comm.cpp
-)
+ "user_node/node/basic_m5stack.cpp")
 
 if(WIN32)
 	target_link_libraries(${CMAKE_PROJECT_NAME} ws2_32)

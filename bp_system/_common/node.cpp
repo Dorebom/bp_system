@@ -93,9 +93,10 @@ void node::_task_send()
 
     while (check_node_running() == true)
     {
-        if (check_allowed_comm_udp())
+        if (check_allowed_comm_udp() && is_send_data_exist_)
         {
             comm_udp_.send_data(reinterpret_cast<uint8_t*>(&send_data_), sizeof(st_node_cmd));
+            is_send_data_exist_ = false;
         }
         std::this_thread::sleep_for(std::chrono::microseconds(node_config_.task_send_periodic_time));
     }
