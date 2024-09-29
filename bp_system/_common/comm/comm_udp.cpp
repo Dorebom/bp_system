@@ -137,7 +137,12 @@ int bytesRead = 0;
     SOCKADDR_IN senderinfo;
     int addrlen = sizeof(senderinfo);
     bytesRead = recvfrom(recv_socket, reinterpret_cast<char*>(data), data_size, 0, (SOCKADDR*)&senderinfo, &addrlen);
-    std::cout << "Recv data size: " << bytesRead << std::endl;
+    /*
+    if (bytesRead >  0)
+	{
+        std::cout << "Recv data size: " << bytesRead << std::endl;
+	}
+    */
     /*
     for (size_t i = 0; i < data_size; i++)
     {

@@ -1,0 +1,12 @@
+{
+    "node_name" : "basic_imu_node",
+    "node_type" : "basic_imu_node",
+    "task_main_periodic_time" : 50,
+    "transit_watch_dog_time" : 1000.0,
+    "cmd_stack_size" : 5,
+    "sys_cmd_stack_size" : 2,
+    "print_log" : true,
+    "use_udp_communication" : false,
+    "requirement_node_list" : {
+    }
+}

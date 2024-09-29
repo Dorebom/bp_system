@@ -1,0 +1,16 @@
+{
+    "node_name" : "pub_control",
+    "node_type" : "basic_pub_control",
+    "task_main_periodic_time" : 50000,
+    "transit_watch_dog_time" : 1000.0,
+    "cmd_stack_size" : 5,
+    "sys_cmd_stack_size" : 2,
+    "print_log" : true,
+    "use_udp_communication" : false,
+    "requirement_node_list" : {
+        "sub_servo1" : {"node_type" : "basic_sub_servo",
+                        "setting_json_file_name" : "sub_servo.json",
+                        "setting_json_folder_name" : "../../../user_node/config/"}
+    }
+}
+

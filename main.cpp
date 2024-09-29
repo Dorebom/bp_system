@@ -48,7 +48,7 @@ int main()
 
     hub_.ChangeStable();
 
-    hub_.exec_node("basic_sub_servo", "sub_servo.json", "../../../user_node/config/");
+    //hub_.exec_node("basic_sub_servo", "sub_servo.json", "../../../user_node/config/");
     //hub_.exec_node("basic_pub_control", "pub_control.json", "../../../user_node/config/");
 
     hub_.exec_node("basic_m5stack", "basic_m5stack.json", "../../../user_node/config/");
@@ -66,7 +66,7 @@ int main()
         {
             break;
         }
-        hub_.display_state();
+        //hub_.display_state();
         std::this_thread::sleep_for(std::chrono::seconds(3));
         
         //hub_.End();
