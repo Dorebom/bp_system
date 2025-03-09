@@ -111,6 +111,7 @@ std::cout << "Port: " << port << std::endl;
 #elif __linux__
     bind(recv_socket, (struct sockaddr*)&recv_address, sizeof(recv_address));
 #endif
+    // ioctlsocket(recv_socket, FIONBIO, 0);
 }
 
 void CommUdp::reset_send_address(const char *ip, int port)

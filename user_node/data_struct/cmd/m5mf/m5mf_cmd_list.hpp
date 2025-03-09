@@ -1,0 +1,89 @@
+#pragma once
+
+namespace M5MF
+{
+
+    enum class M5MF_CMD_LIST : int
+    {
+        /*
+         * System Manager Command List 0 - 99
+         */
+         /* State machine cmd */
+        NONE = 0,
+        CHANGE_SM_STABLE,
+        CHANGE_SM_READY,
+        CHANGE_SM_REPAIR,
+        CHANGE_SM_FORCE_STOP,
+        RELEASE_FORCE_STOP,
+
+        /* System manager cmd */
+        CONNECT,
+        DISCONNECT,
+        REQUEST_STATE,
+        START_STREAM_STATE,
+        STOP_STREAM_STATE,
+        START_LOGGING,
+        STOP_LOGGING,
+        SET_NODE_ID,
+        SET_CONFIG,
+
+        RESET_ERROR,
+        RESET_ALERT,
+        // 以下、サーボ制御コマンド
+        CONNECT_CAN,
+        DISCONNECT_CAN,
+
+        /*
+         * Control System Command List 100 - 199
+         */
+        CS_HALT_OPERATING_SERVO = 100,
+        CS_RAISE_OPERATING_SERVO,
+        CS_POWER_ON,
+        CS_POWER_OFF,
+
+        CS_CHANGE_MF1,
+        CS_CHANGE_MF2,
+
+        CS_CHANGE_POSITION_CONTROL,
+        CS_CHANGE_VELOCITY_CONTROL,
+        CS_CHANGE_TORQUE_CONTROL,
+
+        CS_ALLJOINT_POSITION_CONTROL,
+        CS_ALLJOINT_VELOCITY_CONTROL,
+        CS_ALLJOINT_TORQUE_CONTROL,
+
+        CS_SCARA_POSITION_CONTROL,
+        CS_SCARA_VELOCITY_CONTROL,
+        CS_SCARA_TORQUE_CONTROL,
+
+        CS_SCARA_POSIPOSI_CONTROL,
+        CS_SCARA_POSITRQ_CONTROL,
+        CS_SCARA_VELOTRQ_CONTROL,
+        CS_SCARA_CIRCPOSIPOSI_CONTROL,
+        CS_SCARA_CIRCPOSITRQ_CONTROL,
+
+        CS_SET_MECHANICAL_POSITION_TO_ZERO,
+
+        SERVO_POSITION_CONTROL,
+        SERVO_VELOCITY_CONTROL,
+        SERVO_TORQUE_CONTROL,
+
+        SCARA_POSITION_CONTROL,
+        SCARA_VELOCITY_CONTROL,
+        SCARA_TORQUE_CONTROL,
+
+        /*
+		 * API Command List 200 - 299
+		 */
+        CS_MOVE = 200,
+        CS_CHANGE_MF_UP,
+        CS_CHANGE_MF_DOWN,
+        CS_CHANGE_CONTROL_MODE_UP,
+        CS_CHANGE_CONTROL_MODE_DOWN,
+
+
+        PERIOD_CMD  // この行は削除しないこと
+
+    };
+
+} // namespace M5MF

@@ -1,0 +1,18 @@
+{
+  "node_name": "m5mf_api_a",
+  "node_type": "m5mf_api",
+  "task_recv_periodic_time": 15000,
+  "task_send_periodic_time": 15000,
+  "task_main_periodic_time": 12000,
+  "recv_port": 50002,
+  "send_port": 50001,
+  "recv_ip": "192.168.8.143",
+  "send_ip": "192.168.8.217",
+  "transit_watch_dog_time": 1000.0,
+  "cmd_stack_size": 10,
+  "sys_cmd_stack_size": 2,
+  "print_log": true,
+  "use_udp_communication": true,
+  "requirement_node_list": {
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "node_name": "windows_joycon_a",
+  "node_type": "windows_joycon",
+  "task_main_periodic_time": 25000,
+  "transit_watch_dog_time": 1000.0,
+  "cmd_stack_size": 5,
+  "sys_cmd_stack_size": 2,
+  "print_log": true,
+  "use_udp_communication": false,
+  "requirement_node_list": {
+    "m5mf_api_a": {
+      "node_type": "m5mf_api",
+      "setting_json_file_name": "m5mf_api.json",
+      "setting_json_folder_name": "../../../user_node/config/"
+    }
+  }
+}

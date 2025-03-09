@@ -52,6 +52,8 @@ struct st_m5_control_state_udp
     float cmd_joint_position;
     float cmd_joint_velocity;
     float cmd_joint_torque;
+    float cmd_joint_current;
+    float dummy2;
 
 };
 

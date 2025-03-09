@@ -3,7 +3,7 @@
 #include "node_state_machine.hpp"
 #include "stacker.hpp"
 
-#define MAX_NODE_STATE_DATA_SIZE 200
+#define MAX_NODE_STATE_DATA_SIZE 300
 
 struct common_state_code
 {

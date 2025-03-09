@@ -11,6 +11,8 @@
 #include "user_node/node/basic_gui_comm.hpp"
 //
 #include "user_node/node/basic_m5stack.hpp"
+#include "user_node/node/windows_joycon_node.hpp"
+#include "user_node/node/m5mf_api.hpp"
 
 int main()
 {
@@ -33,6 +35,9 @@ int main()
     BasicGuiComm gui_comm_node;
 
     BasicM5stack m5stack_node;
+    //
+    M5mfApi m5mf_api_node;
+    BasicJoyconNode joycon_node;
 
     hub_.store_node(servo_node, "basic_sub_servo");
     hub_.store_node(pub_node, "basic_pub_control");
@@ -40,6 +45,10 @@ int main()
     hub_.store_node(gui_comm_node, "basic_gui_comm");
 
     hub_.store_node(m5stack_node, "basic_m5stack");
+
+    //
+    hub_.store_node(m5mf_api_node, "m5mf_api");
+    hub_.store_node(joycon_node, "windows_joycon");
 
     hub_.show_stored_node();
     // <<- END Store Nodes
@@ -51,7 +60,11 @@ int main()
     //hub_.exec_node("basic_sub_servo", "sub_servo.json", "../../../user_node/config/");
     //hub_.exec_node("basic_pub_control", "pub_control.json", "../../../user_node/config/");
 
-    hub_.exec_node("basic_m5stack", "basic_m5stack.json", "../../../user_node/config/");
+    // hub_.exec_node("basic_m5stack", "basic_m5stack.json", "../../../user_node/config/");
+
+    // >> Joycon for Windows environment
+    hub_.exec_node("windows_joycon", "windows_joycon.json", "../../../user_node/config/");
+    // hub_.exec_node("m5mf_api", "m5mf_api.json", "../../../user_node/config/");
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 

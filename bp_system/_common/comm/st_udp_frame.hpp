@@ -5,9 +5,9 @@
 #define MAX_UDP_STACK_MARKER_NUM 24
 #define UDP_ONE_STACK_SIZE 50
 #define MAX_UDP_SEND_STATE_DATA_SIZE 1200 // >= MAX_UDP_STACK_MARKER_NUM * UDP_ONE_STACK_SIZE
-#define MAX_STACK_SIZE_AT_ONCE 200
+#define MAX_STACK_SIZE_AT_ONCE 300
 
-struct udp_frame
+struct UdpDataFrame
 {
     // 固定ヘッダーのデータサイズ
     int udp_frame_header_size;  // フレームヘッダーのサイズ[byte]
@@ -25,14 +25,14 @@ struct udp_frame
     // バイナリデータをコピーする配列
     std::uint8_t data[MAX_UDP_SEND_STATE_DATA_SIZE];
 
-    udp_frame(/* args */) {
+    UdpDataFrame(/* args */) {
         udp_frame_header_size =
             sizeof(udp_frame_header_size) +
             sizeof(fixed_state_header_data_size) +
             sizeof(fixed_cmd_header_data_size) + sizeof(max_stack_marker_size) +
             sizeof(one_stack_size) + sizeof(max_stack_size_at_once) +
             sizeof(stack_marker_num) + sizeof(stack_num) +
-            MAX_UDP_STACK_MARKER_NUM;  // size = 4 * 8 + 20 = 52
+            MAX_UDP_STACK_MARKER_NUM;  // size = 4 * 8 + 24 = 56
         //
         fixed_state_header_data_size = 0;
         fixed_cmd_header_data_size = 0;
